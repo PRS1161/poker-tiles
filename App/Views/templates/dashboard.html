@@ -1,0 +1,446 @@
+{% extends "partition/layout.html" %}
+
+{% block body %}
+
+	<!-- Breadcrumb -->
+	<section class="content-header">
+	  <h1>
+	    {{App.name}}
+	    <small>Version 1.0</small>
+	  </h1>
+	  <ol class="breadcrumb">
+	    <li><a href="/dashboard">Home</a></li>
+	    <li class="active">Dashboard</li>
+	  </ol>
+	</section>
+
+	<!-- /Title -->
+	{% include "partition/notification.html" %}
+	<!-- Row -->
+
+    <!-- /Main Content -->
+    <section class="content">      
+      	<div class="row">
+	        <div class="col-md-4 col-sm-6 col-xs-12">
+	          <div class="info-box">
+	            <span class="info-box-icon bg-aqua"><i class="fa fa-users"></i></span>
+	            <div class="info-box-content">
+	              <span class="info-box-text" title="Online Players / Total Players">Online Players / <br> Total Players</span>
+	              <span class="info-box-number">{{totalOnlinePlayers}} / {{totalPlayer}}</span>
+	            </div>
+	          </div>
+	        </div>
+	        <!-- /.col -->
+	        <div class="col-md-4 col-sm-6 col-xs-12">
+	          <div class="info-box">
+	            <span class="info-box-icon bg-red"><i class="fa fa-gamepad"></i></span>
+	            <div class="info-box-content">
+	              <span class="info-box-text" title="Running Game / Playing Player">Running Games / <br/> Playing Players</span>
+	              <span class="info-box-number">{{totalRunningGame}} / {{totalPlayingPly}}</span>
+	            </div>
+	          </div>
+	        </div>
+	        <!-- /.col -->
+	        <!-- /.col -->
+	        <div class="col-md-4 col-sm-6 col-xs-12">
+	          <div class="info-box">
+	            <span class="info-box-icon bg-yellow"><i class="fa fa-gamepad"></i></span>
+	            <div class="info-box-content">
+	              <span class="info-box-text" title="Game Played">Hands Played</span>
+	              <span class="info-box-number">{{totalGamePlayed}}</span>
+	            </div>
+	          </div>
+	        </div>
+	        <!-- /.col -->
+      	</div>
+      	<!-- /.row -->
+      	<div class="row">
+	        <div class="col-md-12">
+	          <div class="box">
+	            <div class="box-header with-border">
+	              <h3 class="box-title">Monthly Recap Report</h3>
+	              <div class="box-tools pull-right">
+	            </div>
+
+	            <!-- /.box-header -->
+	            <div class="box-body">
+	              <div class="row">
+	                <div class="col-md-12">
+	                  <p class="text-center">
+	                    <strong>Game Played By User from: {{chartStartDate}} - {{chartEndDate}} </strong>
+	                  </p>
+	                  <div class="chart">
+	                    <!-- Sales Chart Canvas -->
+	                    <canvas id="monthlyPlayedGameChart" style="height: 180px;"></canvas>
+	                  </div>
+	                  <!-- /.chart-responsive -->
+	                </div>
+	                <!-- /.col -->
+	                <!-- /.col -->
+	              </div>
+	              <!-- /.row -->
+	            </div>
+
+	          </div>
+	        </div>
+      	</div>
+			<!-- /.row -->
+
+			<!-- Left col -->
+			<div class="col-md-8">
+				<div class="row">
+					<div class="col-md-12">
+						<!-- USERS LIST -->
+						<div class="box box-danger">
+							<div class="box-header with-border">
+								<h3 class="box-title">Latest Players</h3>
+
+								<div class="box-tools pull-right">
+									<span class="label label-danger">{{latestPlayer.length}} New Players</span>
+									<button type="button" class="btn btn-box-tool" data-widget="collapse"><i class="fa fa-minus"></i>
+									</button>
+									<button type="button" class="btn btn-box-tool" data-widget="remove"><i class="fa fa-times"></i>
+									</button>
+								</div>
+							</div>
+							<!-- /.box-header -->
+							<div class="box-body no-padding">
+								<ul class="users-list clearfix">
+									{%for player in latestPlayer %}
+										<li>
+											<img src="dist/img/user.png" alt="User Image" width="30px" height="30px">
+											<a class="users-list-name" href="#">{{player.username}}</a>
+											<span class="users-list-date">{{player.createdAtFormated}}</span>
+										</li>
+									{%endfor%}
+									</ul>
+								<!-- /.users-list -->
+							</div>
+							<!-- /.box-body -->
+							<div class="box-footer text-center">
+								<a href="/player" class="uppercase">View All Users</a>
+							</div>
+							<!-- /.box-footer -->
+						</div>
+						<!--/.box -->
+					</div>
+					<!-- /.col -->
+				</div>
+				<!-- /.row -->
+
+				<!-- TABLE: LATEST ORDERS -->
+				<div class="box box-info">
+					<div class="box-header with-border">
+						<h3 class="box-title">Latest Hand History</h3>
+
+						<div class="box-tools pull-right">
+							<button type="button" class="btn btn-box-tool" data-widget="collapse"><i class="fa fa-minus"></i>
+							</button>
+							<button type="button" class="btn btn-box-tool" data-widget="remove"><i class="fa fa-times"></i></button>
+						</div>
+					</div>
+					<!-- /.box-header -->
+					<div class="box-body">
+						<div class="table-responsive">
+							<table class="table no-margin" id="myTable">
+								<thead>
+								<tr>
+									<th>Game Number</th>
+									<th>smallBlind</th>
+									<th>bigBlind</th>
+									<th>status</th>
+									<th>Pot</th>
+								</tr>
+								</thead>
+								<tbody>
+								
+								</tbody>
+							</table>
+						</div>
+						<!-- /.table-responsive -->
+					</div>
+					<!-- /.box-body -->
+					<div class="box-footer clearfix">
+						<a href="/game" class="btn btn-sm btn-info btn-flat pull-left">View All History</a>
+						<!--  <a href="javascript:void(0)" class="btn btn-sm btn-default btn-flat pull-right">View All Orders</a> -->
+					</div>
+					<!-- /.box-footer -->
+				</div>
+				<!-- /.box -->
+			</div>
+			<!-- /.col -->
+
+			<div class="col-md-4">
+				<div class="box box-default">
+					<div class="box-header with-border">
+						<h3 class="box-title">Game Usage</h3>
+
+						<div class="box-tools pull-right">
+							<button type="button" class="btn btn-box-tool" data-widget="collapse"><i class="fa fa-minus"></i>
+							</button>
+							<button type="button" class="btn btn-box-tool" data-widget="remove"><i class="fa fa-times"></i></button>
+						</div>
+					</div>
+					<!-- /.box-header -->
+					<div class="box-body">
+						<div class="row">
+							<div class="col-md-8">
+								<div class="chart-responsive">
+									<canvas id="gameUsages" height="150"></canvas>
+								</div>
+								<!-- ./chart-responsive -->
+							</div>
+							<!-- /.col -->
+							<div class="col-md-4">
+								<ul class="chart-legend clearfix">
+				
+									<li><i class="fa fa-circle-o text-green"></i> Android</li>
+									<li><i class="fa fa-circle-o text-blue"></i>IOS</li>
+									<li><i class="fa fa-circle-o text-red"></i>Other</li>
+								</ul>
+							</div>
+							<!-- /.col -->
+						</div>
+						<!-- /.row -->
+					</div>
+					<!-- /.box-body -->
+					<div class="box-footer no-padding">
+						<ul class="nav nav-pills nav-stacked">
+								<li>
+									<a href="#">Android
+											<span class="pull-right text-green">
+												<i class="fa fa-angle-up chartAndroid">
+													0%
+												</i>
+											</span>
+									</a>
+								</li>
+								<li>
+									<a href="#">IOS
+											<span class="pull-right text-blue">
+												<i class="fa fa-angle-up chartIos">
+												0%
+												</i>
+											</span>
+									</a>
+								</li>
+								<li>
+									<a href="#">Other
+											<span class="pull-right text-red">
+												<i class="fa fa-angle-up chartOther">
+												0%
+												</i>
+											</span>
+									</a>
+								</li>
+						</ul>
+					</div>
+					<!-- /.footer -->
+				</div>
+				<!-- /.box -->
+
+				<!-- PRODUCT LIST -->
+				<div class="box box-primary">
+					<div class="box-header with-border">
+						<h3 class="box-title">Top Players</h3>
+
+						<div class="box-tools pull-right">
+							<button type="button" class="btn btn-box-tool" data-widget="collapse"><i class="fa fa-minus"></i>
+							</button>
+							<button type="button" class="btn btn-box-tool" data-widget="remove"><i class="fa fa-times"></i></button>
+						</div>
+					</div>
+					<!-- /.box-header -->
+					<div class="box-body">
+						<ul class="products-list product-list-in-box">
+							{% for player in topPlayers %}
+								<li class="item">
+									<div class="product-img">
+										<img src="dist/img/logo.png" alt="Product Image">
+									</div>
+									<div class="product-info">
+										<a href="javascript:void(0)" class="product-title">{{player.username}}
+											<span class="label label-warning pull-right">{{player.chips}}</span></a>
+										
+										<span class="product-description">
+													{{player.chips}} Chips
+												</span>
+									</div>
+								</li>
+							{% endfor%}
+
+						</ul>
+					</div>
+					<!-- /.box-body -->
+					<div class="box-footer text-center">
+						<a href="/player" class="uppercase">View All Players</a>
+					</div>
+					<!-- /.box-footer -->
+				</div>
+				<!-- /.box -->
+			</div>
+			<!-- /.col -->
+    </section>
+    <!-- /.content -->
+
+	</div>
+	<!-- /.content-wrapper -->
+
+<!-- Footer -->
+<footer class="main-footer">
+	<div class="pull-right hidden-xs">
+		<b>Version</b> 1.0
+	</div>
+	<strong>Copyright &copy; 2020-2021 <a href="#">Poker Tiles</a>.</strong> All rights
+	reserved.
+</footer>
+<!-- /Footer -->
+
+</div>
+	<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/2.2.0/socket.io.js"></script>
+{% endblock %}
+
+
+{% block Jscript %}
+<script>
+	$(document).ready( function () {
+
+		var host = window.location.origin;
+		/* $('#myTable').DataTable({
+			// "scrollX": true,
+			"searching": false,
+			"ajax": host + "/game/history",
+			"columns": [
+			{ "data": "gameNumber" },
+			{ "data": "smallBlind" },
+			{ "data": "bigBlind"},
+			{ "data": "status"},
+			{ "data": "pot"}
+			]
+		}); */
+
+
+	 	// Game Play Chart
+		var theMonths = ["January", "February", "March", "April", "May",
+		  "June", "July", "August", "September", "October", "November", "December"];
+		var labels =[];
+		for (var i = 0; i <= 11; i++) {
+		  labels.push(theMonths[i]);
+		}
+
+		var host = window.location.origin;
+		if( $('#monthlyPlayedGameChart').length > 0 ){
+		  // Get context with jQuery - using jQuery's .get() method.
+		  var GameCanvas = $('#monthlyPlayedGameChart').get(0).getContext('2d');
+		  // This will get the first returned node in the jQuery collection.
+			/* $.ajax({
+				type: 'GET',
+				url :host + "/dashboardChart/getMonthlyPlayedGameChart",
+				success:function(res){
+				},
+				complete: function(data){
+					var gameConfig = {
+						type: 'line',
+						data: {
+							labels  : data.responseJSON.dateArray,
+							datasets: [{
+								label: 'Game Played By Player',
+								backgroundColor: "#3b8bba",
+								borderColor: "rgba(60,141,188,0.8)",
+								data:  data.responseJSON.dailyGamePlayedArray,
+								fill: true,
+							}],
+						},
+						options: {
+							display: false,
+							responsive: true,
+							legend: {
+								//position: 'top',
+								display: false,
+							},
+						}
+					};
+					var chart = new Chart(GameCanvas, gameConfig)
+				}
+			}); */
+		}
+
+		// Platform Chart
+		if( $('#gameUsages').length > 0 ){
+		//   $.ajax({
+		//     type: 'GET',
+		//     url :host + "/dashboardChart/getGameUsageChart",
+		//     success:function(res){
+		//     },
+		//     complete: function(data){
+		//       var pieChartCanvas = $('#gameUsages').get(0).getContext('2d');
+		//       let webCount=0;
+		//       let androidCount=0;
+		//       let iosCount=0;
+		// 	  	console.log(data.responseJSON.webCount);
+		//       if(data.responseJSON.android.length > 0){ androidCount=data.responseJSON.android[0].count };
+		//       if(data.responseJSON.ios.length > 0){iosCount=data.responseJSON.ios[0].count };
+		//       if(data.responseJSON.webCount){webCount=data.responseJSON.webCount.count };
+		//       /* if ( ('android' in data.responseJSON)) {
+		// 				androidCount=data.responseJSON.android[0].percentage 
+		//       }
+		// 			if ( ('ios' in data.responseJSON)) {
+		// 				iosCount=data.responseJSON.ios[0].percentage
+		//       } */
+		// 			$('.chartAndroid').html(androidCount);
+		// 			$('.chartIos').html(iosCount);
+		// 			$('.chartOther').html(webCount);
+
+		// 			var config = {
+		// 				type: 'doughnut',
+		// 				data: {
+		// 					datasets: [{
+		// 						data: [
+		// 							androidCount,
+		// 							iosCount,
+		// 							webCount,
+		// 						],
+		// 						backgroundColor: [
+		// 							"#00a65a",
+		// 							"#0000FF",
+		// 							"#FF0000",
+		// 						],
+		// 					}],
+		// 					labels: [
+		// 						'Android',
+		// 						'IOS',
+		// 						'Other'
+		// 					]
+		// 				},
+		// 				options: {
+		// 					display: false,
+		// 					responsive: true,
+		// 					legend: {
+		// 						//position: 'top',
+		// 						display: false,
+		// 					},
+		// 					animation: {
+		// 						animateScale: false,
+		// 						animateRotate: true,
+		// 						animationSteps : 100,
+		// 						animationEasing : 'easeOutBounce',
+		// 					},
+		// 					segmentShowStroke    : true,
+		// 					segmentStrokeColor   : '#fff',
+		// 					segmentStrokeWidth   : 1,
+		// 					percentageInnerCutout: 50, // This is 0 for Pie charts
+		// 					maintainAspectRatio  : false,
+		// 					tooltipTemplate      : '<%=value %> <%=label%> users'
+		// 				}
+		// 			};
+
+		// 			var myDoughnutChart = new Chart(pieChartCanvas, config );
+		//     }
+		//   });
+		}
+
+	});
+	
+</script>
+
+{% endblock %}

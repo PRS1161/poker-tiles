@@ -1,0 +1,94 @@
+<header class="main-header">
+
+  <!-- Logo -->
+  <a href="/admin" class="logo" style="background-color: #1a2226;">
+    <!-- mini logo for sidebar mini 50x50 pixels -->
+    <span class="logo-mini">PT</span>
+    <!-- logo for regular state and mobile devices -->
+    <span class="logo-lg"><img class="brand-img mr-10" src="/dist/img/logo.png" alt="Poker Tiles" height="50px" /></span>
+  </a>
+<input value="{{App.maintenanceMode}}" hidden type="text" id="maintenanceMode">
+  <!-- Header Navbar: style can be found in header.less -->
+  <nav class="navbar navbar-static-top">
+    <!-- Sidebar toggle button-->
+    <a href="#" class="sidebar-toggle" data-toggle="push-menu" role="button">
+      <span class="sr-only">Toggle navigation</span>
+    </a>
+    <!-- Navbar Right Menu -->
+    <div class="navbar-custom-menu">
+      <ul class="nav navbar-nav">
+        <!-- User Account: style can be found in dropdown.less -->
+          {% if App.maintenanceMode %}
+          <li style="padding: 0 40px; top: 5px; color: #ffffff;">
+          <span>Maintenance Mode </span>
+          <div style="text-align: center; background-color: green;">
+            <span> ON </span>
+          </div>
+          </li> 
+          {% endif %}
+        
+
+        <li class="dropdown user user-menu">
+          <a href="#" class="dropdown-toggle" data-toggle="dropdown">
+             
+            {% if session.role == 'admin'%}
+            <img src="/profile/{{session.avatar}}" class="img-circle" alt="User Image" width="50px" height="50px">
+            {%else%}
+            <img src="/profile/agents/{{session.avatar}}" class="img-circle" alt="Agent Image" width="50px" height="50px" >
+            {%endif%}
+           
+          <span class="">{{session.name}} [<span id="chips" name="chips">{{(Agent.chips)}} </span> ]</span>
+          </a>
+          <ul class="dropdown-menu">
+            <!-- User image -->
+            <li class="user-header">
+              {% if session.role == 'admin'%}
+              <img src="/profile/{{session.avatar}}" class="img-circle" alt="User Image" width="50px" height="50px">
+              {%else%}
+              <img src="/profile/agents/{{session.avatar}}" class="img-circle" alt="Agent Image" width="50px" height="50px">
+
+              {%endif%}
+              
+
+              <p>
+                {{session.name}}
+              </p>
+            </li>
+            <!-- Menu Footer-->
+            <li class="user-footer">
+              <div class="pull-left">
+                {% if session.role == 'admin'%}
+                <a href="/profile" class="btn btn-default btn-flat">Profile</a>
+                {%else%}
+                <a href="/agent/profile" class="btn btn-default btn-flat">Profile</a>
+                {%endif%}
+              </div>
+              <div class="pull-right">
+                <a href="/logout" class="btn btn-default btn-flat">Sign out</a>
+              </div>
+            </li>
+          </ul>
+        </li>
+        <!-- Control Sidebar Toggle Button -->
+        <li>
+          <a href="/settings" ><i class="fa fa-gears"></i></a>
+        </li>
+      </ul>
+    </div>
+
+  </nav>
+</header>
+<script src="/vendors/bower_components/jquery/dist/jquery.min.js"></script>
+
+<script>
+  var Mode = $("#maintenanceMode").val();
+  console.log(Mode)
+if($('body').find('.navbar').length > 0){
+  if(Mode=="true"){
+        $('.navbar').addClass('hedarModeColor');
+  }else {
+        $('.navbar').removeClass('hedarModeColor');
+  }
+   
+}	
+  </script>

@@ -1,0 +1,134 @@
+{% extends "partition/layout.html" %}
+
+
+{% block body %}
+
+
+<!-- Main Content -->
+<div class="page-wrapper">
+	<div class="container-fluid">
+
+		<!-- Title -->
+		<section class="content-header">
+		    <h1>Player Table </h1>
+		    <ol class="breadcrumb">
+		        <li><a href="/dashboard">Dashboard</a></li>
+		        <li><a href="/allplayers">Player</a></li>
+		        {% if player %}
+		        <li class="active">Edit Player</li>
+		        {% else %}
+		        <li class="active">Add Player</li>
+		        {% endif %}
+		    </ol>
+		</section>
+		<!-- /Title -->
+		{% include "partition/notification.html" %}
+		<section class="content">
+			<!-- Row -->
+			<div class="row">
+				<div class="col-sm-12">
+					<div class="panel panel-default card-view">
+						<div class="panel-heading">
+							<div class="pull-left">
+								{% if player %}
+								<h6 class="panel-title txt-dark">Edit Player</h6>
+								{% else %}
+								<h6 class="panel-title txt-dark">Add Player</h6>
+								{% endif %}
+							</div>
+							<div class="clearfix"></div>
+						</div>
+						<div class="panel-wrapper collapse in">
+							<div class="panel-body">
+								<div class="table-wrap">
+									<div class="table-responsive">
+										{% if player %}
+											<form method="POST" action="/playerEdit/{{player._id}}" name="adduser" class="form-horizontal">
+											{% else %}
+											<form method="POST" action="/addPlayer" name="adduser" class="form-horizontal">
+												{% endif %}
+												<table border="0" class="table display  pb-30">
+													<div class="col-sm-6">
+														<div class="panel-wrapper collapse in">
+															<div class="panel-body">
+															
+																<div class="form-group">
+																	<label class="control-label mb-10 col-sm-2" for="username">Username:</label>
+																	<div class="col-sm-10">
+																		<input type="text" class="form-control" id="username" placeholder="Enter username" required name="username" value="{{player.username}}" data-validation="length alphanumeric"
+																		data-validation-length=""
+																		data-validation-error-msg="" onkeyup="return forceLower(this);">
+																	</div>
+																</div>
+																	<div class="form-group">
+																	<label class="control-label mb-10 col-sm-2" for="email">Email:</label>
+																	<div class="col-sm-10">
+																		<input type="text" class="form-control" placeholder="Enter email"   required name="email" id="email" value="{{player.email}}" data-validation="email">
+																	</div>
+																</div>
+																{% if player %}
+																{% else %}
+																<div class="form-group">
+																	<label class="control-label mb-10 col-sm-2" for="pwd_hr">Password:</label>
+																	<div class="col-sm-10">
+																		<input type="password" class="form-control" id="password" placeholder="Enter password" data-minlength="6" name="password" data-validation="length" data-validation-length="min6">
+																	</div>
+																</div>
+																{% endif %}
+																{# <div class="form-group">
+																	<label class="control-label mb-10 col-sm-2" for="username">Firstname:</label>
+																	<div class="col-sm-10">
+																		<input type="text" class="form-control" id="firstname" placeholder="Enter firstname" required name="firstname" value="{{player.firstname}}" data-validation="length alphanumeric"
+																		data-validation-length=""
+																		data-validation-error-msg="Firstname is required">
+																	</div>
+																</div>
+																<div class="form-group">
+																	<label class="control-label mb-10 col-sm-2" for="username">Lastname:</label>
+																	<div class="col-sm-10">
+																		<input type="text" class="form-control" id="lastname" placeholder="Enter lastname" required name="lastname" value="{{player.lastname}}" data-validation="length alphanumeric"
+																		data-validation-length=""
+																		data-validation-error-msg="Lastname is required">
+																	</div>
+																</div> #}
+															</div>
+														</div>
+													</div>
+							
+													<tr>
+														<td colspan="2">
+															<div class="pull-right">
+																<input type="submit" class="btn btn-success btn-flat" value="Submit">
+															<a href="/allplayers" class="btn btn-danger btn-flat">Cancel</a>
+															</div>
+														</td>
+													</tr>
+												</table>
+											</form>
+									</div>
+								</div>
+
+							</div>
+						</div>
+					</div>
+				</div>
+			</div>
+
+		</section>
+				<!-- /Row -->
+	</div>
+</div>
+
+{% endblock %}
+
+{% block Jscript %}
+<script>
+	$(document).ready( function () {
+		var host = window.location.origin;
+	} );
+	function forceLower(strInput) 
+	{
+	strInput.value=strInput.value.toLowerCase();
+	}
+</script>
+{% endblock %}

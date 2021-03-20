@@ -1,0 +1,69 @@
+<!-- Left side column. contains the logo and sidebar -->
+<aside class="main-sidebar">
+	<!-- sidebar: style can be found in sidebar.less -->
+	<section class="sidebar">
+		<!-- Sidebar user panel -->
+		<div class="user-panel">
+			<div class="pull-left image">
+				{% if session.role == 'admin'%}
+					<img src="/profile/{{session.avatar}}" class="img-circle" alt="User Image" width="50px" height="50px">
+					{%else%}
+					<img src="/profile/agents/{{session.avatar}}" class="img-circle" alt="Agent Image" width="50px" height="50px" >
+				{%endif%}
+			</div>
+			<div class="pull-left info">
+				<p>{{session.name}}</p>
+				<a href="#">
+					<i class="fa fa-circle text-success"></i> Online</a>
+			</div>
+		</div>
+			<!-- sidebar menu: style can be found in sidebar.less -->
+			<ul class="sidebar-menu" data-widget="tree">
+				<li class="header">MAIN NAVIGATION</li>
+				{% if session.role == 'admin'%}
+					<li class="{{classActive}}">
+						<a href="/admin">
+							<i class="fa fa-dashboard"></i>
+							<span>Dashboard</span>
+						</a>
+					</li>
+					<li class="{{settingActive}}">
+						<a href="/settings">
+							<i class="fa fa-gears mr-20"></i>
+							<span> Settings</span>
+						</a>
+					</li>
+					<li class=" {{playerActive}}">
+						<a href="/allplayers">
+							<i class="fa fa-users"></i>
+							<span>Players</span>
+						</a>
+					</li>
+					<!-- <li class="{{allGameHistory}}">
+						<a href="/game">
+							<i class="fa fa-gamepad mr-20"></i>
+							<span> Hand History</span>
+						</a>
+					</li> -->
+					
+					<li class="{{maintenanceActive}}">
+						<a href="/maintenance">
+							<i class="fa fa-wrench mr-20"></i>
+							<span> Maintenance</span>
+						</a>
+					</li>
+					<!-- <li class="{{blockedIpActive}}">
+						<a href="/blockedip">
+							<i class="fa fa-exclamation-circle mr-20"></i>
+							<span> Blocked Ip</span>
+						</a>
+					</li> -->
+
+				{% endif %}
+
+				
+
+		</ul>
+	</section>
+	<!-- /.sidebar -->
+</aside>

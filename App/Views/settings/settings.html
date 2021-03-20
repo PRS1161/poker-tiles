@@ -1,0 +1,140 @@
+{% extends "partition/layout.html" %}
+
+
+{% block body %}
+
+
+<!-- Main Content -->
+<div class="page-wrapper">
+	<div class="container-fluid">
+
+		<!-- Breadcrumb -->
+		<section class="content-header">
+			<h1>Settings Table</h1>
+			<ol class="breadcrumb">
+				<li><a href="/dashboard">Dashboard</a></li>
+				<li class="active">Settings</li>
+			</ol>
+		</section>
+		<!-- /Breadcrumb -->
+
+		<!-- /Title -->
+		{% include "partition/notification.html" %}
+		<!-- Row -->
+		<section class="content">
+			<div class="row">
+				<div class="col-sm-12">
+					<div class="panel panel-default card-view">
+						<div class="panel-heading">
+							<div class="pull-left">
+								<h6 class="panel-title txt-dark">Settings</h6>
+							</div>
+							<div class="clearfix"></div>
+						</div>
+						<div class="panel-wrapper collapse in">
+							<div class="panel-body">
+								<div class="table-wrap">
+									<div class="table-responsive">
+										{% if setting %}
+										<form method="POST" action="/settings/update" class="form-horizontal">
+										{% else %}
+										<form method="POST" action="/settings/add" class="form-horizontal">
+										{% endif %}
+											<table border="0" class="table display  pb-30">
+												<div class="col-sm-12">
+													<div class="panel-wrapper collapse in">
+														<div class="panel-body">
+														<input type="hidden" name="id" value="{{setting.id}}">
+															<div class="form-group">
+																<label class="control-label mb-10 col-sm-2" for="username">Rake Percentage:</label>
+																<div class="col-sm-6">
+																	<input type="text" class="form-control" id="rakePercenage" placeholder="Enter Rake Percentage" required data-validation="number" data-validation-allowing="float" name="rakePercenage" value="{{setting.rakePercenage}}" >
+																</div>
+															</div>
+															<div class="form-group">
+																<label class="control-label mb-10 col-sm-2" for="pwd_hr">Default Chips:</label>
+																<div class="col-sm-6"> 
+																	<input type="text" class="form-control" id="chips" placeholder="Enter Chips" required data-validation="number" name="chips" value="{{setting.defaultChips}}">
+																</div>
+															</div>
+															<div class="form-group">
+																<label class="control-label mb-10 col-sm-2" for="processId">Process Id:</label>
+																<div class="col-sm-6"> 
+																	<input type="text" class="form-control" id="processId" placeholder="Enter Game ProcessId"  name="processId" value="{{setting.processId}}">
+																</div>
+															</div>
+															
+															<hr>
+															<div class="form-group">
+																<label class="control-label mb-10 col-sm-2" for="db_backup_days">Database Backup(In Days):</label>
+																<div class="col-sm-6">
+																	<input type="number" class="form-control" id="db_backup_days" placeholder="Backup in days"  name="db_backup_days" value="{{setting.BackupDetails.db_backup_days}}" data-validation="" 
+																	data-validation-error-msg="Database Backup days is required">
+																</div>
+															</div>
+															<div class="form-group">
+																<label class="control-label mb-10 col-sm-2" for="db_host">Server:</label>
+																<div class="col-sm-6">
+																	<input type="text" class="form-control" id="db_host" placeholder="localhost:27017"  name="db_host" value="{{setting.BackupDetails.db_host}}" data-validation="" 
+																	data-validation-error-msg="Hostname is required">
+																</div>
+															</div>
+															<div class="form-group">
+																<label class="control-label mb-10 col-sm-2" for="db_username">Database Username:</label>
+																<div class="col-sm-6">
+																	<input type="text" class="form-control" id="db_username" placeholder="Enter Database username"  name="db_username" value="{{setting.BackupDetails.db_username}}" data-validation="" 
+																	data-validation-error-msg="Database Username is required">
+																</div>
+															</div>
+															<div class="form-group">
+																<label class="control-label mb-10 col-sm-2" for="db_password">Database Password:</label>
+																<div class="col-sm-6">
+																	<input type="text" class="form-control" id="db_password" placeholder="Enter Database Password"  name="db_password" value="{{setting.BackupDetails.db_password}}" data-validation="" 
+																	data-validation-error-msg="Database Password is required">
+																</div>
+															</div>
+															<div class="form-group">
+																<label class="control-label mb-10 col-sm-2" for="db_name">Database Name:</label>
+																<div class="col-sm-6">
+																	<input type="text" class="form-control" id="db_name" placeholder="Enter Database Name"  name="db_name" value="{{setting.BackupDetails.db_name}}" data-validation="" 
+																	data-validation-error-msg="Database Name is required">
+																</div>
+															</div>
+															<!-- <div class="form-group">
+																<label class="control-label mb-10 col-sm-2" for="username">Default Expire Time:</label>
+																<div class="col-sm-6">
+																	<input type="text" class="form-control" id="expireTime" placeholder="Enter Expire Time" required data-validation="number" name="expireTime" value="{{setting.expireTime}}">
+																</div>
+															</div> -->
+														</div>
+													</div>
+												</div>
+												<tr>
+													<td colspan="2">
+														<input type="submit" class="btn btn-success btn-flat" value="Submit">
+														<!-- <a href="/settings" class="btn btn-info btn-lg">Cancel</a> -->
+													</td>
+												</tr>
+											</table>
+										</form>
+									</div>
+								</div>
+							</div>
+						</div>
+					</div>
+				</div>
+			</div>
+		</section>
+		<!-- /Row -->
+	</div>
+</div>
+
+{% endblock %}
+
+{% block Jscript %}
+	<script>
+		$(document).ready( function () {
+			var host = window.location.origin;
+		} );
+	</script>
+{% endblock %}

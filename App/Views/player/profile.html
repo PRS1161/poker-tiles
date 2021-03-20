@@ -1,0 +1,168 @@
+Hand{% extends "partition/layout.html" %}
+
+{% block body %}
+
+<div class="page-wrapper">
+	<div class="container-fluid">
+
+
+		<section class="content-header">
+			<h1>Player Profile</h1>
+			<ol class="breadcrumb">
+				<li><a href="/dashboard">Dashboard</a></li>
+				<li><a href="/allplayers">Player</a></li>
+				<li class="active" href="/player">Profile</li>
+			</ol>
+		</section>
+
+		{% include "partition/notification.html" %}
+
+		<section class="content">
+
+			<div class="row">
+				<div class="col-md-4">
+					<div class="box box-primary">
+						<div class="box-body box-profile">
+							<img class="profile-user-img img-responsive img-circle" src="/profile/user.png" alt="User profile picture">
+
+							<h3 class="profile-username text-center">{{player.username}} [{{player.uniqId}}]</h3>
+							<button type="button" class="btn btn-block btn-success .btn-lg">Chips: {{player.chips}}</button>
+							<!-- <p class="text-muted text-center">{{player.email}}</p> -->
+
+							<ul class="list-group list-group-unbordered">
+								<li class="list-group-item">
+									<b>Game Played</b> <a class="pull-right">{{ gamePlayed }}</a>
+								</li>
+								<li class="list-group-item">
+									<b>Game Won</b> <a class="pull-right">{{ gamewon}}</a>
+								</li>
+								<li class="list-group-item">
+									<b>Game Lost</b> <a class="pull-right">{{ gameLost }}</a>
+								</li>
+							</ul>
+
+						</div>
+						<!-- /.box-body -->
+					</div>
+
+				</div>		
+				
+			</div>
+			
+
+		</section>
+
+	</div>
+</div>
+
+<!--Notification Modal -->
+<div id="myNotification" class="modal fade" role="dialog">
+	<div class="modal-dialog">
+
+		<!-- Modal content-->
+		<div class="modal-content">
+			<div class="modal-header">
+				<button type="button" class="close" data-dismiss="modal">&times;</button>
+				<h4 class="modal-title">Notification</h4>
+			</div>
+			<div class="modal-body">
+				<div class="form-group">
+					<input type="text" name="notification_desc" class="form-control" id="notification_desc">
+				</div>
+			</div>
+			<div class="modal-footer">
+				<input type="submit" name="Send" class="btn btn-success" value="Send">
+				<button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+			</div>
+		</div>
+
+	</div>
+</div>
+
+
+
+
+{% endblock %}
+
+{% block Jscript %}
+<script>
+
+	$(document).ready(function () {
+		var host = window.location.origin;
+
+
+		var theMonths = ["January", "February", "March", "April", "May",
+			"June", "July", "August", "September", "October", "November", "December"];
+		var labels = [];
+		for (var i = 0; i <= 11; i++) {
+			labels.push(theMonths[i]);
+		}
+
+		var host = window.location.origin;
+		
+		if( $('#gamePlayedByPlayer').length > 0 ){
+		  // Get context with jQuery - using jQuery's .get() method.
+		  var gameChartCanvas = $('#gamePlayedByPlayer').get(0).getContext('2d');
+		  // This will get the first returned node in the jQuery collection.
+	
+		  var playerId =$("#gamePlayedByPlayer").data('player');
+		  console.log("=========>",playerId);
+		  $.ajax({
+		    type: 'GET',
+		    url :host + "/playerChart/getMonthlyGamePlayedByPlayerChart/"+playerId,
+		    success:function(res){
+		      
+		    },
+		    complete: function(data){
+		      console.log(data.responseJSON);
+		     
+		      	var gameConfig = {
+		      	  	type: 'line',
+		      	  	data: {
+		      	  		labels  : labels,
+		      	  		datasets: [
+		      	  		{
+		      	  			label : 'Game Played By Player',
+		      	  			backgroundColor: "#3b8bba",
+		      	  			borderColor: "rgba(60,141,188,0.8)",
+		      	  			data: data.responseJSON.monthlyGamePlayed, // data.responseJSON
+		      	  			fill: false,
+		      	  		},
+		      	  		/*{
+		      	  			label : 'Game Won',
+		      	  			backgroundColor: "#008000",
+		      	  			borderColor: "rgba(60,141,188,0.8)",
+		      	  			data: data.responseJSON.monthlyWonGame, // data.responseJSON
+		      	  			fill: false,
+		      	  		},
+		      	  		{
+		      	  			label : 'Game Lost',
+		      	  			backgroundColor: "#FF0000",
+		      	  			borderColor: "rgba(60,141,188,0.8)",
+		      	  			data: data.responseJSON.monthlyLostGame, // data.responseJSON
+		      	  			fill: false,
+		      	  		}*/
+		      	  		],
+		      	  	},
+		      	  	options: {
+		      	  		display: false,
+		      	  		responsive: true,
+		      	  		legend: {
+		      	  			//position: 'top',
+		      	  			display: false,
+		      	  		},
+		      	  	}
+		      	};
+		       var chart = new Chart(gameChartCanvas, gameConfig)
+		      
+		      
+		    }
+		  })
+		}
+
+	});
+
+
+
+</script>
+{% endblock %}

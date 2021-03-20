@@ -1,0 +1,264 @@
+{% extends "partition/layout.html" %}
+
+{% block body %}
+
+<!-- Main Content -->
+<div class="page-wrapper">
+	<div class="container-fluid">
+
+		<section class="content-header">
+			<h1>User Profile </h1>
+			<ol class="breadcrumb">
+				<li><a href="#"><i class="fa fa-dashboard"></i> Dashboard</a></li>
+				<li class="active">User profile</li>
+			</ol>
+		</section>
+
+		{% include "partition/notification.html" %}
+		<!-- Row -->
+		<section class="content">
+			<div class="row">
+				<div class="col-sm-12">
+					<div class="panel panel-default card-view">
+						<div class="row">
+
+							<div class="col-md-6">
+								<div class="panel panel-default card-view">
+									<div class="panel-heading">
+										<div class="pull-left">
+											<h6 class="panel-title txt-dark">Edit Profile</h6>
+										</div>
+										<div class="clearfix"></div>
+									</div>
+									<div class="panel-wrapper collapse in">
+										<div class="panel-body">
+											<div class="row">
+												<div class="col-sm-12 col-xs-12">
+													<div class="form-wrap">
+														<form class="form-horizontal" action="/profile/update" method="post">
+														<input type="hidden" name="id" value="{{user.id}}">
+															<div class="form-group">
+																<label for="exampleInputuname_3" class="col-sm-3 control-label">Fullname*</label>
+																<div class="col-sm-9">
+																	<div class="input-group">
+																		<div class="input-group-addon"><i class="glyphicon glyphicon-user"></i></div>
+																		<input type="text" class="form-control" id="name" placeholder="Enter name" required name="name" value="{{user.name}}" data-validation="length required" 
+																		data-validation-length="" 
+																		data-validation-error-msg="Username is required">
+																	</div>
+																</div>
+															</div>
+															<div class="form-group">
+																<label  for="exampleInputEmail_3" class="col-sm-3 control-label">Email*</label>
+																<div class="col-sm-9">
+																	<div class="input-group">
+																		<div class="input-group-addon"><i class="glyphicon glyphicon-envelope"></i></div>
+																		<input type="email" class="form-control" required name="email" id="email" value="{{user.email}}" data-validation="email">
+																	</div>
+																</div>
+															</div>
+															<div class="form-group mb-0">
+																<div class="col-sm-offset-3 col-sm-9">
+																	<button type="submit" class="btn btn-success ">Update</button>
+																</div>
+															</div>
+														</form>
+													</div>
+												</div>
+											</div>
+										</div>
+									</div>
+								</div>	
+							</div>
+							
+							<div class="col-md-6">
+								<div class="panel panel-default card-view">
+									<div class="panel-heading">
+										<div class="pull-left">
+											<h6 class="panel-title txt-dark">Change Password</h6>
+										</div>
+										<div class="clearfix"></div>
+									</div>
+									<div class="panel-wrapper collapse in">
+										<div class="panel-body">
+											<div class="row">
+												<div class="col-sm-12 col-xs-12">
+													<div class="form-wrap">
+														<form class="form-horizontal" action="/profile/changePwd" method="post">
+														<input type="hidden" name="id" value="{{user.id}}">
+															<div class="form-group">
+																<label for="exampleInputuname_4" class="col-sm-3 control-label">New Password*</label>
+																<div class="col-sm-9">
+																	<div class="input-group">
+																	<div class="input-group-addon"><i class="glyphicon glyphicon-lock"></i></div>
+																		<input type="password" class="form-control" id="password" placeholder="Enter password" name="pass_confirmation" data-validation="length" data-validation-length="min6">
+																	</div>
+																</div>
+															</div>
+															<div class="form-group">
+																<label for="exampleInputEmail_4" class="col-sm-3 control-label">Confirm Password*</label>
+																<div class="col-sm-9">
+																	<div class="input-group">
+																	<div class="input-group-addon"><i class="glyphicon glyphicon-lock"></i></div>
+																		<input type="password" class="form-control" placeholder="Enter Confirm Password" name="pass"  data-validation="confirmation">
+																		
+																	</div>
+																</div>
+															</div>
+															<div class="form-group mb-0">
+																<div class="col-sm-offset-3 col-sm-9">
+																	<button type="submit" class="btn btn-success ">Change Password</button>
+																</div>
+															</div>
+														</form>
+													</div>
+												</div>
+											</div>
+										</div>
+									</div>
+								</div>	
+							</div>
+							
+							<div class="col-md-6">
+								<div class="panel panel-default card-view">
+									<div class="panel-heading">
+										<div class="pull-left">
+											<h6 class="panel-title txt-dark">Change Avatar</h6>
+										</div>
+										<div class="clearfix"></div>
+									</div>
+									<div class="panel-wrapper collapse in">
+										<div class="panel-body">
+											<div class="row">
+												<div class="col-sm-12 col-xs-12">
+													<div class="form-wrap">
+														<form class="form-horizontal" action="/profile/changeAvatar" method="post" enctype="multipart/form-data">
+														<input type="hidden" name="id" value="{{user.id}}">
+															<div class="form-group">
+																<label for="avatar" class="col-sm-3 control-label">New Avatar</label>
+																<div class="col-sm-9">
+																	<div class="input-group">
+																	<div class="input-group-addon"><i class="glyphicon glyphicon-picture"></i></div>
+																		<input type="file" class="form-control" id="avatar" name="avatar" required accept="image/*">
+																	</div>
+																</div>
+															</div>
+															<div class="form-group mb-0">
+																<div class="col-sm-offset-3 col-sm-9">
+																	<button type="submit" class="btn btn-success ">Upload Avatar</button>
+																</div>
+															</div>
+														</form>
+													</div>
+												</div>
+											</div>
+										</div>
+									</div>
+								</div>	
+							</div>
+
+							<!-- <div class="col-md-6">
+								<div class="panel panel-default card-view">
+									<div class="panel-heading">
+										<div class="pull-left">
+											<h6 class="panel-title txt-dark">Request Chips</h6>
+										</div>
+										<div class="clearfix"></div>
+									</div>
+									<div class="panel-wrapper collapse in">
+										<div class="panel-body">
+											<div class="row">
+												<div class="col-sm-12 col-xs-12">
+													<div class="form-wrap">
+														<a data-toggle="modal" data-target="#responsive-modal" class="btn btn-default btn-xs addChips btn-rounded" id="addChips" title="Request Cash"><i class="fa fa-dollar" aria-hidden="true"></i></a>
+													</div>
+												</div>
+											</div>
+										</div>
+									</div>
+
+								</div>	
+							</div> -->
+
+							<!-- Request MOney -->
+							<section class="content">
+								<!-- Row -->
+								<div class="row">
+										<!-- /.modal -->
+										<div id="responsive-modal" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true" style="display: none;">
+											<div class="modal-dialog">
+												<div class="modal-content">
+												<form method="POST" name="adduser" action="/allUser/requestCash">
+													<div class="modal-header">
+														<button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+														<h5 class="modal-title">Add/Deduct Cash</h5>
+													</div>
+													<div class="modal-body">
+													<div id="requestCash"> </div>
+															<div class="form-group">
+																<label for="recipient-name" class="control-label mb-10">Cash:</label>
+																<input type="text" name="chips" class="form-control" id="action_chips" required>
+																<span class="help-block form-error" id="displayError" style="display: none;">The input value was not a correct number</span>
+															</div>
+														
+													</div>
+													<div class="modal-footer">
+														<input type="submit" name="requestType" class="btn btn-success playerChipsAction" value="Add">
+														<input type="submit" class="btn btn-danger playerChipsAction" name="requestType" value="Deduct">
+													</div>
+												</form>
+												</div>
+											</div>
+										</div>
+										<!-- Button trigger modal -->
+								</div>
+								<!-- /Row -->
+							</section>	
+
+						</div>
+					</div>
+				</div>
+			</div>
+		</section>
+
+		<!-- /Row -->
+	</div>
+</div>
+
+{% endblock %}
+
+{% block Jscript %}
+<script>
+	$(document).ready( function () {
+		var host = window.location.origin;
+	} );
+
+	$.validate({
+		modules : 'security',
+		onModulesLoaded : function() {
+			// Show strength of password
+			$('input[name="pass_confirmation"]').displayPasswordStrength();
+		}
+	});
+
+	/*$("body").on("click", ".addChips", function(){
+		var agentId = $(this).attr("id");
+		// console.log("player id ----------->",PlayerId)
+		var html = '<input type="hidden" name="agentId" value="'+agentId+'" />';
+		$("#requestCash").html(html);
+	});*/
+
+	$("body").on("click", ".playerChipsAction", function(){
+		var action_chips = $('#action_chips').val();
+		if (action_chips < 0 || isNaN(action_chips) || (action_chips % 1 !== 0)) {
+			document.getElementById( 'displayError' ).style.display = 'block';
+			document.getElementById( 'displayError' ).style.color = 'red';
+		    return false;
+		}
+	});
+	$("body").on("click", "#action_chips", function(){
+		document.getElementById( 'displayError' ).style.display = 'none';
+	});
+</script>
+
+{% endblock %}
