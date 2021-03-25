@@ -1,11 +1,11 @@
 var Sys = require('../../../../Boot/Sys');
-
+var moment = require('moment-timezone');
 module.exports = {
     subscribeRoom: async function (socket, data){
 		try {
 			console.log("Subscribe Room is called");
 			var player = await Sys.Game.CashGame.Texas.Services.PlayerServices.getById(data.playerId);
-			let room = await Sys.Game.CashGame.Texas.Controllers.RoomProcess.checkRoomSeatAvilability(socket,data);
+			let room = await Sys.Game.CashGame.Texas.newControllers.RoomProcess.checkRoomSeatAvilability(socket,data);
 			
 			if (!room || room == undefined) {
 				return {
@@ -68,7 +68,7 @@ module.exports = {
 			}
 			socket.myData = {};
 
-			room = await Sys.Game.CashGame.Texas.Controllers.RoomProcess.broadcastPlayerInfo(room);
+			room = await Sys.Game.CashGame.Texas.newControllers.RoomProcess.broadcastPlayerInfo(room);
 
 			if(room.game){
 				let playersCards = [];
@@ -208,7 +208,7 @@ module.exports = {
 				}
 			}
 
-			room = await Sys.Game.CashGame.Texas.Controllers.RoomProcess.broadcastPlayerInfo(room);
+			room = await Sys.Game.CashGame.Texas.newControllers.RoomProcess.broadcastPlayerInfo(room);
 			
 
 			// Start Room if not running
@@ -314,7 +314,7 @@ module.exports = {
 			console.log("Reconnect Game ........ Reset Game ContentBrodcast Send.")
 			await Sys.Io.of(Sys.Config.Namespace.CashTexas).to(socket.id).emit('ResetGame', {roomId: room.id});
 
-			room = await Sys.Game.CashGame.Texas.Controllers.RoomProcess.broadcastPlayerInfo(room);
+			room = await Sys.Game.CashGame.Texas.newControllers.RoomProcess.broadcastPlayerInfo(room);
 
 			if(room.game){
 				let playersCards = [];
@@ -452,7 +452,7 @@ module.exports = {
 			console.log("joinRoom player: ", player);
 			console.log("joinRoom data: ", data);
 
-			room = await Sys.Game.CashGame.Texas.Controllers.RoomProcess.joinRoom(player, data);
+			room = await Sys.Game.CashGame.Texas.newControllers.RoomProcess.joinRoom(player, data);
 
 			console.log("RoomProcess.joinRoom room: ", room);
 
@@ -516,7 +516,7 @@ module.exports = {
     leaveRoom: async function (socket, data) {
 		try {
             console.log("leave room called")
-			let responce = await Sys.Game.CashGame.Texas.Controllers.RoomProcess.leftRoom(data);
+			let responce = await Sys.Game.CashGame.Texas.newControllers.RoomProcess.leftRoom(data);
 
 			if(!responce){
 				return { status: 'fail', result: null, message: "Something Went Wrong", statusCode: 401 }

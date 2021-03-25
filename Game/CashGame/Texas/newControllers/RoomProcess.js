@@ -1,6 +1,30 @@
 var Sys = require('../../../../Boot/Sys');
 
 module.exports = {
+	checkRoomSeatAvilability: async function (socket, data) {
+		try {
+			let self = this
+			let room = await Sys.Game.CashGame.Texas.Services.RoomServices.get(data.roomId);
+			if (!room) {
+				return {
+					status: 'fail',
+					result: null,
+					message: "Room not found",
+					statusCode: 401
+				};
+			}
+			console.log("room in check room", room)
+			for (let i = 0; i < room.players.length; i++) {
+				if (room.players[i].id == data.playerId) {
+					room.players[i].socketId = socket.id; // Update Socket Id if Old Player Found!.
+				}
+			}
+			return room;
+
+		} catch (e) {
+			console.log("Error: ", e);
+		}
+	},
 	joinRoom: async function (player, data) {
 		try {
 			var room = await Sys.Game.CashGame.Texas.Services.RoomServices.get(data.roomId);
@@ -110,7 +134,7 @@ module.exports = {
 				console.log("Player Updated", room.players.length, updatedPlayerChips.chips);
 
 				if (room.players.length > 0) {
-					room = await Sys.Game.CashGame.Texas.Controllers.RoomProcess.broadcastPlayerInfo(room);
+					room = await Sys.Game.CashGame.Texas.newControllers.RoomProcess.broadcastPlayerInfo(room);
 					let totalPlayers = 0
 					room.players.forEach(function (player) {
 						if (player.status != 'Left' && player.status != 'Ideal') {
@@ -458,7 +482,7 @@ module.exports = {
 								clearInterval(Sys.Timers[room.id]);
 								room.players[room.currentPlayer].isAlreadyActed = true;
 								console.log("room players in newRoundStarted", room.players); 
-								Sys.Game.CashGame.Texas.Controllers.RoomProcess.playerDefaultAction(room.id);
+								Sys.Game.CashGame.Texas.newControllers.RoomProcess.playerDefaultAction(room.id);
 							}else{
 								await Sys.Io.of(Sys.Config.Namespace.CashTexas).to(room.id).emit('OnTurnTimer', {
 									playerId: room.getCurrentPlayer().id,
@@ -568,6 +592,46 @@ module.exports = {
 		}
 	},
 
+	playerDefaultAction: async function (id) {
+		try {
+			console.log('playerDefaultAction called');
+			clearTimeout(await Sys.Timers[id]);
+			let room = await Sys.Game.CashGame.Texas.Services.RoomServices.get(id);
+			if (room.getCurrentPlayer()) {
+				let currentPlayer = room.getCurrentPlayer()
+				let maxBet, i;
+				maxBet = 0;
+				console.log("room.game.bets :", room.game.bets);
+				for (i = 0; i < room.game.bets.length; i += 1) {
+					if (room.game.bets[i] > maxBet) {
+						maxBet = room.game.bets[i];
+					}
+				}
+
+
+				// first check for check action and then for fold or lefting the player
+				if (room.game.bets[room.currentPlayer] == maxBet) {
+					room.check(currentPlayer.id);
+				} else {
+					currentPlayer.defaultActionCount += 1;
+					
+					let bigBlindPlayer = room.getBigBliendPlayer();
+					console.log("BIG BLIND PLAYER",bigBlindPlayer.id,currentPlayer.id)
+					if(bigBlindPlayer.id == currentPlayer.id){
+						await Sys.Io.of(Sys.Config.Namespace.CashTexas).to(room.id).emit('OnIdealPlayer', { 'playerId': currentPlayer.id, status: true, roomId: room.id });
+						currentPlayer.idealTime = (currentPlayer.idealTime == null) ? new Date().getTime() : currentPlayer.idealTime;
+						currentPlayer.status = 'Ideal';
+						room.fold(currentPlayer.id);
+					}else{
+						room.fold(currentPlayer.id);
+					}
+				}
+			}
+		} catch (e) {
+			console.log("Error", e);
+		}
+	},
+
 	saveGameToHistry: async function (room) {
 		try {
 			console.log('Save game histry called');
@@ -651,4 +715,16 @@ module.exports = {
 			return new Error('Error in broadcastPlayerInfo');
 		}
 	},
+}
+
+async function getRandomIntInclusive(min, max) {
+	try {
+	  min = Math.ceil(min);
+	  max = Math.floor(max);
+	  return Math.floor(Math.random() * (max - min + 1)) + min;
+	}
+	catch (e) {
+	  console.log("Catched error in getRandomIntInclusive :", e);
+	  return 0;
+	}
 }

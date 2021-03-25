@@ -1,5 +1,5 @@
 var Sys = require('../../../../Boot/Sys');
-let moment = require('moment');
+let moment = require('moment-timezone');
 class Room {
   constructor(id, smallBlind, bigBlind,dealerIndex,smallBlindIndex,bigBlindIndex, minPlayers, maxPlayers, minBuyIn, maxBuyIn, status, dealer, players, gameWinners, gameLosers, turnBet, game, currentPlayer, rackPercent, rackAmount, expireTime, tableNumber,timerStart,otherData, lastFoldedPlayerIdArray, tempStatus, oldDealerIndex, oldSmallBlindIndex, oldBigBlindIndex) {
 
@@ -338,7 +338,6 @@ class Room {
         let playingKey = 0;
         room.otherData.isPreventMultipleTurn = false;
       
-        await this.sbBb(room);
         for (let p in room.players) {
           if (room.players[p].status == 'Waiting') {
             room.players[p].status = 'Playing';
@@ -659,7 +658,7 @@ class Room {
           // console.log("Game :>",game);
           if(game){
             // Send Brodcast For New Updated Chips
-            room = await Sys.Game.CashGame.Texas.Controllers.RoomProcess.broadcastPlayerInfo(room);
+            room = await Sys.Game.CashGame.Texas.newControllers.RoomProcess.broadcastPlayerInfo(room);
 
             room.game = game;
             room.game.status = 'Running';
@@ -884,7 +883,7 @@ class Room {
               if (playersLength >= room.minPlayers) {
                 room.game.status = 'Running';
                 room.status = 'Running';
-                await Sys.Game.CashGame.Texas.Controllers.RoomProcess.newGameStarted(room);
+                await Sys.Game.CashGame.Texas.newControllers.RoomProcess.newGameStarted(room);
                 room.initNewRound();
               }else{
                 console.log("game finished before card distribute");
@@ -900,11 +899,11 @@ class Room {
                 }
                 console.log("room here", JSON.stringify(room.players));
                 room.currentPlayer = room.dealerIndex + 3;
-                let checkForEndOfRoundTemp = await Sys.Game.CashGame.Texas.Controllers.PlayerProcess.checkForEndOfRound(room);
+                let checkForEndOfRoundTemp = await Sys.Game.CashGame.Texas.newControllers.PlayerProcess.checkForEndOfRound(room);
                 console.log("statttttt", room.game.status,checkForEndOfRoundTemp );
                 if (checkForEndOfRoundTemp === true || room.game.status == "ForceFinishedFolded" || room.game.status == "ForceFinishedAllIn") {
                   console.log("progress called event if other player lefts the game");
-                  Sys.Game.CashGame.Texas.Controllers.PlayerProcess.progress(room);
+                  Sys.Game.CashGame.Texas.newControllers.PlayerProcess.progress(room);
                 }
               }
            
@@ -1013,7 +1012,7 @@ class Room {
      console.log("Bets ========================================================");
      console.log(room.game.bets);
 
-     let newRoundStarted = Sys.Game.CashGame.Texas.Controllers.RoomProcess.newRoundStarted(room);
+     let newRoundStarted = Sys.Game.CashGame.Texas.newControllers.RoomProcess.newRoundStarted(room);
 
 
   }

@@ -210,7 +210,7 @@ class Player {
                 "remaining": parseFloat( parseFloat( this.chips ).toFixed(4) ),
                 "boardCard":cards
             })
-            Sys.Game.CashGame.Texas.Controllers.PlayerProcess.progress(Sys.Rooms[roomId]);
+            Sys.Game.CashGame.Texas.newControllers.PlayerProcess.progress(Sys.Rooms[roomId]);
 
             console.log("Player check Sys.Rooms[roomId].game.pot: ", Sys.Rooms[roomId].game.pot);
 
@@ -291,17 +291,17 @@ class Player {
         if(Sys.Rooms[roomId].game.status == "Running" && Sys.Rooms[roomId].game.roundName != "Showdown"){
             if(Sys.Rooms[roomId].getCurrentPlayer().id == this.id){
                 console.log("Game left or folded by  current player");
-                Sys.Game.CashGame.Texas.Controllers.PlayerProcess.progress(Sys.Rooms[roomId]);
+                Sys.Game.CashGame.Texas.newControllers.PlayerProcess.progress(Sys.Rooms[roomId]);
             }else{
                 // game left or fold by other player, no need to call progress()
                 console.log("Dont change player turn")
                 let currentPlayerTemp = Sys.Rooms[roomId].currentPlayer;
                 console.log("current player before checking for endofround", currentPlayerTemp);
                 let tempRoom =Sys.Rooms[roomId];
-                let checkForEndOfRoundTemp = await Sys.Game.CashGame.Texas.Controllers.PlayerProcess.checkForEndOfRound(tempRoom)
+                let checkForEndOfRoundTemp = await Sys.Game.CashGame.Texas.newControllers.PlayerProcess.checkForEndOfRound(tempRoom)
                 if (checkForEndOfRoundTemp === true || tempRoom.game.status == "ForceFinishedFolded" || tempRoom.game.status == "ForceFinishedAllIn") {
                     console.log("progress called event if other player lefts the game")
-                    Sys.Game.CashGame.Texas.Controllers.PlayerProcess.progress(Sys.Rooms[roomId]);
+                    Sys.Game.CashGame.Texas.newControllers.PlayerProcess.progress(Sys.Rooms[roomId]);
                 }
                 Sys.Rooms[roomId].currentPlayer = currentPlayerTemp;
                 console.log("current player After checking for endofround", Sys.Rooms[roomId].currentPlayer)
@@ -465,7 +465,7 @@ class Player {
                 }
                 await Sys.Game.CashGame.Texas.Services.PlayerAllTransectionService.createTransaction(transactionDataPot);*/
 					
-                Sys.Game.CashGame.Texas.Controllers.PlayerProcess.progress(Sys.Rooms[roomId]);
+                Sys.Game.CashGame.Texas.newControllers.PlayerProcess.progress(Sys.Rooms[roomId]);
             } else {
                 console.log('You don\'t have enought chips --> ALL IN !!!');
                 this.AllIn(roomId,hasRaised);
@@ -584,7 +584,7 @@ class Player {
             console.log("call player transactionDataPot: ", transactionDataPot);
             await Sys.Game.CashGame.Texas.Services.PlayerAllTransectionService.createTransaction(transactionDataPot);*/
 
-            Sys.Game.CashGame.Texas.Controllers.PlayerProcess.progress(Sys.Rooms[roomId]);
+            Sys.Game.CashGame.Texas.newControllers.PlayerProcess.progress(Sys.Rooms[roomId]);
         } else {
             console.log('You don\'t have enought chips -->(CALL) ALL IN !!!');
             this.AllIn(roomId, hasRaised);
@@ -737,7 +737,7 @@ class Player {
         }
         await Sys.Game.CashGame.Texas.Services.PlayerAllTransectionService.createTransaction(transactionDataPot);*/
 
-        Sys.Game.CashGame.Texas.Controllers.PlayerProcess.progress(Sys.Rooms[roomId]);
+        Sys.Game.CashGame.Texas.newControllers.PlayerProcess.progress(Sys.Rooms[roomId]);
     }
 
     getTotalBet (roomId) {
