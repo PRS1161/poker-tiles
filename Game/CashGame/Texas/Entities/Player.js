@@ -1,7 +1,7 @@
 var Sys = require('../../../../Boot/Sys');
 
 class Player {
-    constructor (id, socketId,seatIndex, playerName, avatar, fb_avatar,status, chips,extraChips,entryChips,folded,allIn,talked,cards,autoBuyin,defaultActionCount,isBot,isSidepot,sitOutNextHand,sitOutNextBigBlind,muck,idealTime, oldPlayerLeftTime, subscribeTime, isAllinPlayersChipsAssigned, isAllInLefted, isDisplayedCard, roundRaisedAmount, isFold, isCheck, isCall, considerLeftedPlayer,longitude, latitude, foldedPlayerRemainingCount, waitForBigBlindCheckbox, waitForBigBlindCheckboxValue,skipDealer,uniqId, sessionId, isAlreadyActed,profilePicUrl) {
+    constructor (id, socketId,seatIndex, playerName, avatar, fb_avatar,status, chips,extraChips,entryChips,folded,allIn,talked,cards,autoBuyin,defaultActionCount,isSidepot,idealTime, subscribeTime, isAllinPlayersChipsAssigned, isAllInLefted, isDisplayedCard, roundRaisedAmount, isFold, isCheck, isCall, considerLeftedPlayer,longitude, latitude, foldedPlayerRemainingCount,uniqId, sessionId, isAlreadyActed,profilePicUrl) {
 
       this.id = id;
       this.socketId = socketId;
@@ -19,13 +19,8 @@ class Player {
       this.cards = (cards)?cards:[];
       this.autoBuyin = autoBuyin|0;
       this.defaultActionCount = (defaultActionCount)?defaultActionCount:0;
-      this.isBot = isBot || false;
       this.isSidepot = isSidepot || false;
-      this.sitOutNextHand = sitOutNextHand || false;
-      this.sitOutNextBigBlind = sitOutNextBigBlind || false;
-      this.muck = muck;
       this.idealTime = idealTime;
-      this.oldPlayerLeftTime = oldPlayerLeftTime;
       this.subscribeTime = subscribeTime;
       this.isAllinPlayersChipsAssigned = (isAllinPlayersChipsAssigned) ? isAllinPlayersChipsAssigned : false;
       this.isAllInLefted =(isAllInLefted) ? isAllInLefted: false;
@@ -37,11 +32,7 @@ class Player {
       this.considerLeftedPlayer = considerLeftedPlayer || false;
       this.longitude = longitude;
       this.latitude = latitude;
-
       this.foldedPlayerRemainingCount = ( foldedPlayerRemainingCount ) ? foldedPlayerRemainingCount : 0;
-      this.waitForBigBlindCheckbox = waitForBigBlindCheckbox || false;
-      this.waitForBigBlindCheckboxValue = waitForBigBlindCheckboxValue || false;
-      this.skipDealer = skipDealer || false;
       this.uniqId = uniqId; 
       this.sessionId=sessionId;
       this.isAlreadyActed = ( isAlreadyActed ) ? isAlreadyActed: false;
@@ -66,13 +57,8 @@ class Player {
             player.cards,
             player.autoBuyin,
             player.defaultActionCount,
-            player.isBot,
             player.isSidepot,
-            player.sitOutNextHand,
-            player.sitOutNextBigBlind,
-            player.muck,
             player.idealTime,
-            player.oldPlayerLeftTime,
             player.subscribeTime,
             player.isAllinPlayersChipsAssigned,
             player.isAllInLefted,
@@ -84,11 +70,7 @@ class Player {
             player.considerLeftedPlayer,
             player.longitude,
             player.latitude,
-
             player.foldedPlayerRemainingCount,
-            player.waitForBigBlindCheckbox,
-            player.waitForBigBlindCheckboxValue,
-            player.skipDealer,
             player.uniqId,
             player.sessionId,
             player.isAlreadyActed,
@@ -113,13 +95,8 @@ class Player {
             cards               : this.cards,
             autoBuyin           : this.autoBuyin,
             defaultActionCount  : this.defaultActionCount,
-            isBot               : this.isBot,
             isSidepot           : this.isSidepot,
-            sitOutNextHand      : this.sitOutNextHand,
-            sitOutNextBigBlind  : this.sitOutNextBigBlind,
-            muck                : this.muck,
             idealTime           : this.idealTime,
-            oldPlayerLeftTime   : this.oldPlayerLeftTime,
             subscribeTime       : this.subscribeTime,
             isAllinPlayersChipsAssigned: this.isAllinPlayersChipsAssigned,
             isAllInLefted       : this.isAllInLefted,
@@ -130,12 +107,8 @@ class Player {
             isCall              : this.isCall,
             considerLeftedPlayer: this.considerLeftedPlayer,
             longitude           : this.longitude,
-            latitude            : this.latitude,
-            
+            latitude            : this.latitude,  
             foldedPlayerRemainingCount: this.foldedPlayerRemainingCount,
-            waitForBigBlindCheckbox : this.waitForBigBlindCheckbox,
-            waitForBigBlindCheckboxValue : this.waitForBigBlindCheckboxValue,
-            skipDealer          : this.skipDealer,
             uniqId              :this.uniqId,
             sessionId           :this.sessionId,
             isAlreadyActed      :this.isAlreadyActed,

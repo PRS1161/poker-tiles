@@ -1,7 +1,7 @@
 var Sys = require('../../../../Boot/Sys');
 let moment = require('moment');
 class Room {
-  constructor(id, smallBlind, bigBlind,dealerIndex,smallBlindIndex,bigBlindIndex, minPlayers, maxPlayers, minBuyIn, maxBuyIn, status, dealer, players, gameWinners, gameLosers, turnBet, game, currentPlayer, rackPercent, rackAmount, expireTime, tableNumber,timerStart,otherData, oldPlayers, lastFoldedPlayerIdArray, tempStatus, oldDealerIndex, oldSmallBlindIndex, oldBigBlindIndex,waitingPlayers) {
+  constructor(id, smallBlind, bigBlind,dealerIndex,smallBlindIndex,bigBlindIndex, minPlayers, maxPlayers, minBuyIn, maxBuyIn, status, dealer, players, gameWinners, gameLosers, turnBet, game, currentPlayer, rackPercent, rackAmount, expireTime, tableNumber,timerStart,otherData, lastFoldedPlayerIdArray, tempStatus, oldDealerIndex, oldSmallBlindIndex, oldBigBlindIndex) {
 
     var room = this;
     this.id = id;
@@ -61,15 +61,7 @@ class Room {
     this.tableNumber = tableNumber;
     this.timerStart = timerStart;
     this.otherData = otherData;
-    this.oldPlayers = [];
-    if (oldPlayers && Array.isArray(oldPlayers)) {
-      room.oldPlayers = [];
-      oldPlayers.forEach(function (player) {
-
-        room.oldPlayers.push(new Sys.Game.CashGame.Texas.Entities.Player().createObject(player));
-
-      });
-    }
+   
     this.lastFoldedPlayerIdArray = [];
     if (lastFoldedPlayerIdArray && Array.isArray(lastFoldedPlayerIdArray) ) {
       room.lastFoldedPlayerIdArray = lastFoldedPlayerIdArray
@@ -80,15 +72,6 @@ class Room {
     this.oldDealerIndex = oldDealerIndex;
     this.oldSmallBlindIndex = oldSmallBlindIndex;
     this.oldBigBlindIndex = oldBigBlindIndex;
-    this.waitingPlayers = [];
-    if (waitingPlayers && Array.isArray(waitingPlayers)) {
-      room.waitingPlayers = [];
-      waitingPlayers.forEach(function (player) {
-
-        room.waitingPlayers.push(new Sys.Game.CashGame.Texas.Entities.Player().createObject(player));
-
-      });
-    }
   }
 
    createObject(room) {
@@ -117,15 +100,13 @@ class Room {
       room.tableNumber,
       room.timerStart,
       room.otherData,
-      room.oldPlayers,
       room.lastFoldedPlayerIdArray,
       //room.previousGameNumber,
       //room.previousGameId,
       room.tempStatus,
       room.oldDealerIndex,
       room.oldSmallBlindIndex,
-      room.oldBigBlindIndex,
-      room.waitingPlayers
+      room.oldBigBlindIndex
     );
   }
 
@@ -159,15 +140,13 @@ class Room {
       tableNumber:this.tableNumber,
       timerStart : this.timerStart,
       otherData : this.otherData,
-      oldPlayers : [],
       lastFoldedPlayerIdArray: [],
       //previousGameNumber: this.previousGameNumber,
       //previousGameId: this.previousGameId,
       tempStatus: this.tempStatus,
       oldDealerIndex : this.oldDealerIndex,
       oldSmallBlindIndex : this.oldSmallBlindIndex,
-      oldBigBlindIndex : this.oldBigBlindIndex,
-      waitingPlayers: []
+      oldBigBlindIndex : this.oldBigBlindIndex
     }
     if (this.players.length > 0) {
       this.players.forEach(function (player) {
@@ -182,16 +161,7 @@ class Room {
     if (this.game) {
       room.game = this.game.toJson();
     }
-    if (this.oldPlayers.length > 0) {
-      this.oldPlayers.forEach(function (player) {
-        room.oldPlayers.push(new Sys.Game.CashGame.Texas.Entities.Player().createObject(player));
-      })
-    }
-    if (this.waitingPlayers.length > 0) {
-      this.waitingPlayers.forEach(function (player) {
-        room.waitingPlayers.push(new Sys.Game.CashGame.Texas.Entities.Player().createObject(player));
-      })
-    }
+    
     return room;
   }
 
@@ -325,31 +295,14 @@ class Room {
      return allHands;
   }
 
-  AddPlayer(id, socketId, playerName, avatar, fb_avatar, chips, seatIndex, autoBuyin, subscribeTime,longitude,latitude,waitForBigBlindCheckbox,waitForBigBlindCheckboxValue,uniqId,sessionId,profilePicUrl) {
+  AddPlayer(id, socketId, playerName, avatar, fb_avatar, chips, seatIndex, autoBuyin, subscribeTime,longitude,latitude,uniqId,sessionId,profilePicUrl) {
 
     let room = this;
     console.log("AddPlayer room.minBuyIn: ", room.minBuyIn);
     if (chips >= room.minBuyIn) {
-      let player = new Sys.Game.CashGame.Texas.Entities.Player(id, socketId,seatIndex, playerName, avatar, fb_avatar, "Waiting", parseFloat(chips),0, parseFloat(chips),false,false,false,[],autoBuyin,0,false,false,false,false,false,null,null, subscribeTime, false, false,false, 0,false, false, false, false, longitude,latitude,0,waitForBigBlindCheckbox,waitForBigBlindCheckboxValue,false,uniqId,sessionId,false,profilePicUrl,false, false, null);
+      let player = new Sys.Game.CashGame.Texas.Entities.Player(id, socketId,seatIndex, playerName, avatar, fb_avatar, "Waiting", parseFloat(chips),0, parseFloat(chips),false,false,false,[],autoBuyin,0,false,null, subscribeTime, false, false,false, 0,false, false, false, false, longitude,latitude,0,uniqId,sessionId,false,profilePicUrl);
       console.log("Player -> :",player)
       this.players.push(player);
-    }
-    return room; // Return Room
-  }
-
-  waitingAddPlayer(id, socketId, playerName, avatar, fb_avatar, chips, seatIndex, autoBuyin, subscribeTime,longitude,latitude,waitForBigBlindCheckbox,waitForBigBlindCheckboxValue,uniqId,sessionId,profilePicUrl) {
-
-    let room = this;
-    console.log("AddPlayer room.minBuyIn: ", room.minBuyIn);
-    if (chips >= room.minBuyIn) {
-      let waitingPlayer = new Sys.Game.CashGame.Texas.Entities.Player(id, socketId,seatIndex, playerName, avatar, fb_avatar, "Waiting", parseFloat(chips),0, parseFloat(chips),false,false,false,[],autoBuyin,0,false,false,false,false,false,null,null, subscribeTime, false, false,false, 0,false, false, false, false, longitude,latitude,0,waitForBigBlindCheckbox,waitForBigBlindCheckboxValue,false,uniqId,sessionId,false,profilePicUrl,false, false, null);
-      console.log("Waiting Player -> :",waitingPlayer)
-      this.waitingPlayers.push(waitingPlayer);
-
-      this.waitingPlayers.sort(function (a, b) {
-        return a.seatIndex - b.seatIndex;
-      });
-
     }
     return room; // Return Room
   }
@@ -385,19 +338,6 @@ class Room {
         let playingKey = 0;
         room.otherData.isPreventMultipleTurn = false;
       
-        for(let w = room.waitingPlayers.length -1 ; w >= 0 ;w--){
-          if(room.waitingPlayers[w].waitForBigBlindCheckbox == true && room.waitingPlayers[w].waitForBigBlindCheckboxValue == false){
-            room.players.push(room.waitingPlayers[w]);
-            room.waitingPlayers.splice(w,1); 
-          }
-        }
-        for(let p = room.players.length -1; p >= 0; p--){
-          if(room.players[p].status == 'Waiting' && room.players[p].waitForBigBlindCheckbox == true && room.players[p].waitForBigBlindCheckboxValue == true){
-            room.waitingPlayers.push(room.players[p]);
-            room.players.splice(p,1);
-          }
-        }
-
         await this.sbBb(room);
         for (let p in room.players) {
           if (room.players[p].status == 'Waiting') {
@@ -406,7 +346,7 @@ class Room {
           room.players[p].considerLeftedPlayer = false;
         }
 
-        console.log("room players while starting game", room.players,room.waitingPlayers);
+        console.log("room players while starting game", room.players);
         console.log("/************** Removed Left Player ***********************/");
 
         /* for (let i = room.players.length-1; i >= 0; i--) {
@@ -422,10 +362,7 @@ class Room {
           let sessionId= room.players[i].uniqId + "-" + room.tableNumber+"-" +timestamp1;
           if (room.players[i].status == 'Left') {
             console.log("Removed Name  : ",room.players[i].playerName,room.players[i].id);
-            room.players[i].sitOutNextHand = false;
-            room.players[i].sitOutNextBigBlind = false;
             room.players[i].defaultActionCount = 0;
-            room.players[i].oldPlayerLeftTime = new Date();
             room.players[i].considerLeftedPlayer = false;
 
             let dataPlayer = await Sys.Game.CashGame.Texas.Services.PlayerServices.getById(room.players[i].id);
@@ -519,85 +456,10 @@ class Room {
               //await Sys.Game.CashGame.Texas.Services.ChipsServices.createTransaction(transactionData);
               room.players[i].isAllinPlayersChipsAssigned = true;
             }
-            if(room.oldPlayers){
-              console.log("in firstttttt");
-              const index = room.oldPlayers.findIndex((e) => e.id === room.players[i].id);
-              if (index === -1) {
-                room.oldPlayers.push(room.players[i].toJson());
-              } else {
-                room.oldPlayers[index] = room.players[i].toJson();
-              }
-            }else{
-              console.log("in secondddd", room.players[i])
-              room.oldPlayers.push(room.players[i].toJson());
-            }
-
+           
             room.players.splice(i,1);
           }
         }
-
-        for (let j = room.waitingPlayers.length-1; j >= 0; j--) {
-          if (room.waitingPlayers[j].status == 'Left') {
-            console.log("Removed Name  : ",room.waitingPlayers[j].playerName,room.waitingPlayers[j].id);
-
-            room.waitingPlayers[j].sitOutNextHand = false;
-            room.waitingPlayers[j].sitOutNextBigBlind = false;
-            room.waitingPlayers[j].defaultActionCount = 0;
-            room.waitingPlayers[j].oldPlayerLeftTime = new Date();
-            room.waitingPlayers[j].considerLeftedPlayer = false;
-            room.waitingPlayers[j].waitForBigBlindCheckbox = false;
-            room.waitingPlayers[j].waitForBigBlindCheckboxValue = false;
-
-            let dataPlayer = await Sys.Game.CashGame.Texas.Services.PlayerServices.getById(room.waitingPlayers[j].id);
-            console.log("room.waitingPlayers[j].isAllinPlayersChipsAssigned in game finish", room.waitingPlayers[j].isAllinPlayersChipsAssigned);
-            if (dataPlayer && room.waitingPlayers[j].isAllinPlayersChipsAssigned == false) {
-              console.log("Chips",dataPlayer.chips,room.waitingPlayers[j].chips);
-
-              let chips = 0;
-              if(room.waitingPlayers[j].extraChips > 0) {
-                console.log("extra chips of lefted player in startGame", room.waitingPlayers[j].id, room.waitingPlayers[j].extraChips);
-                chips = parseFloat(dataPlayer.chips) + parseFloat(room.waitingPlayers[j].chips) + parseFloat(room.waitingPlayers[j].extraChips);
-                let playerUpdate = await Sys.Game.CashGame.Texas.Services.waitingPlayerservices.update(room.waitingPlayers[j].id, { chips: chips, extraChips: 0 });
-                room.waitingPlayers[j].extraChips = 0;
-              }else{
-                chips = parseFloat(dataPlayer.chips) + parseFloat(room.waitingPlayers[j].chips);
-                let playerUpdate = await Sys.Game.CashGame.Texas.Services.PlayerServices.update(room.waitingPlayers[j].id, { chips: chips });
-              }
-
-              //let chips = parseFloat(dataPlayer.chips) + parseFloat(room.waitingPlayers[j].chips);
-              //var playerUpdate = await Sys.Game.CashGame.Texas.Services.PlayerServices.update(room.waitingPlayers[j].id, { chips: chips });
-              // added by K@Y
-              /*let transactionData = {
-                user_id						:	room.waitingplayers[j].id,
-                username					: room.waitingplayers[j].playerName,
-                // gameId						:
-                chips							:	data.chips,
-                previousBalance		:	parseFloat(updatedPlayerChips.chips),
-                // afterBalance
-                category					:	'credit',
-                type							:	'remove',
-                remark						: 'Removing Lefted Player while starting Game'
-              }*/
-              //await Sys.Game.CashGame.Texas.Services.ChipsServices.createTransaction(transactionData);
-              room.waitingPlayers[j].isAllinPlayersChipsAssigned = true;
-            }
-            if(room.oldPlayers){
-              console.log("in firstttttt");
-              const index = room.oldPlayers.findIndex((e) => e.id === room.waitingPlayers[j].id);
-              if (index === -1) {
-                room.oldPlayers.push(room.waitingPlayers[j].toJson());
-              } else {
-                room.oldPlayers[index] = room.waitingPlayers[j].toJson();
-              }
-            }else{
-              console.log("in secondddd", room.waitingPlayers[j]);
-              room.oldPlayers.push(room.waitingPlayers[j].toJson());
-            }
-
-            room.waitingPlayers.splice(j,1);
-          }
-        }
-        console.log("/**************************************************/");
 
         let remainPlayerArray = [];
         for (let i = 0; i < room.players.length; i += 1) {
@@ -624,14 +486,6 @@ class Room {
         let playersLength =  await room.roomPlayerLength(room);
         console.log("Playing Player Length : ", playersLength);
 
-        console.log("BEFORE",room.players,room.waitingPlayers,playersLength)
-        if(playersLength == 1 && room.waitingPlayers.length > 0){
-          for(let j = 0; j < room.waitingPlayers.length; j++){
-            room.waitingPlayers[j].status = 'Playing';
-            room.players.splice(room.players.findIndex(x => x.status == 'Ideal'),0,room.waitingPlayers[j])
-          }
-          room.waitingPlayers = [];
-        }
         room.players.sort(function(a,b){
           if(a.status=='Ideal' && b.status!='Ideal'){
                 return -1;
@@ -643,7 +497,7 @@ class Room {
         });
         room.players = room.players.reverse();
         playersLength =  await room.roomPlayerLength(room);
-        console.log("ROOM AFTER UPDATE",room.players,room.waitingPlayers,playersLength)
+        console.log("ROOM AFTER UPDATE",room.players,playersLength)
 
         for (let i = 0; i < room.players.length; i++) {
           let date = new Date()
@@ -740,14 +594,7 @@ class Room {
               remainPlayerArray.push(room.players[i]);
             }
           }
-          if(remainPlayerArray.length == 1 && room.waitingPlayers.length > 0){
-            for(let i = 0; i < room.waitingPlayers.length; i++){
-              room.waitingPlayers[i].status = 'Playing';
-              remainPlayerArray.push(room.waitingPlayers[i]);
-            }
-            room.waitingPlayers = [];
-          }
-          console.log("REMAIN PLAYER",remainPlayerArray,room.waitingPlayers)
+         
           // Player Sort By SeatIndex.
           remainPlayerArray.sort(function (a, b) {
             return a.seatIndex - b.seatIndex;
@@ -780,14 +627,6 @@ class Room {
           if (room.players[i].status != 'Left' && room.players[i].status != 'Ideal' ) {
             playingCounter++; // Count How Many Player Playing Game.
             playingKey = i;
-            if(room.players[i].waitForBigBlindCheckbox == true && room.players[i].waitForBigBlindCheckboxValue == true){
-              room.players[i].waitForBigBlindCheckbox = false;
-              room.players[i].waitForBigBlindCheckboxValue = false;
-              room.players[i].skipDealer = false;
-              if(i == room.smallBlindIndex){
-                waitingSbPlayer = true;
-              }
-            }
           }
         }
         if(playingCounter == 1){ // if Only One Player in Table
@@ -875,92 +714,48 @@ class Room {
             room.turnBet = {action: '-', playerId: room.players[room.dealerIndex].id, betAmount: 0, raisedAmount : 0, hasRaised: false}             
               let sbChips = 0;
               let bbChips = 0;
-              //for(let i = 0; i < room.players.length; i++){
-              if(room.players[room.smallBlindIndex].waitForBigBlindCheckbox == true || waitingSbPlayer == true){
-              console.log("ITS HERE 1",room.players[room.smallBlindIndex])
-                if (room.players[room.smallBlindIndex].chips <= room.bigBlind) {
-                  bbChips = room.players[room.smallBlindIndex].chips;
-                  var previousBalance = room.players[room.smallBlindIndex].chips;
-                  room.players[room.smallBlindIndex].allIn = true;
-                  room.players[room.smallBlindIndex].talked = true;
-                  room.game.bets[room.smallBlindIndex] = parseFloat(room.players[room.smallBlindIndex].chips);
-                  room.game.history.push({
-                    time: new Date(),
-                    playerId: room.players[room.smallBlindIndex].id,
-                    playerName: room.players[room.smallBlindIndex].playerName,
-                    gameRound: room.game.roundName,
-                    totalPot:0,
-                    "boardCard":room.game.board.length ? room.game.board:"",
-                    betAmount: parseFloat( parseFloat( room.players[room.smallBlindIndex].chips).toFixed(4) ),
-                    totalBetAmount: parseFloat( parseFloat(room.bigBlind).toFixed(4) ),
-                    playerAction: Sys.Config.Texas.AllIn,
-                    remaining: 0
-                  });
-                  room.game.gameTotalChips= parseFloat(parseFloat(room.game.gameTotalChips) + parseFloat(room.players[room.smallBlindIndex].chips));
-                  room.players[room.smallBlindIndex].chips = 0;
-                } else {
-                  bbChips = room.bigBlind;
-                  var previousBalance = room.players[room.smallBlindIndex].chips;
-                  room.players[room.smallBlindIndex].chips -= room.bigBlind;
-                  room.game.gameTotalChips = parseFloat(parseFloat(room.game.gameTotalChips) + parseFloat(bbChips));
-                  room.game.bets[room.smallBlindIndex] = parseFloat(room.bigBlind);
-                  room.game.history.push({
-                    time: new Date(),
-                    playerId: room.players[room.smallBlindIndex].id,
-                    playerName: room.players[room.smallBlindIndex].playerName,
-                    gameRound: room.game.roundName,
-                    totalPot:0,
-                    "boardCard":room.game.board.length ? room.game.board:"",
-                    betAmount: parseFloat( parseFloat( room.bigBlind).toFixed(4) ),
-                    totalBetAmount: parseFloat( parseFloat(room.bigBlind).toFixed(4) ),
-                    playerAction: Sys.Config.Texas.BigBlind,
-                    remaining: parseFloat( parseFloat( room.players[room.smallBlindIndex].chips ).toFixed(4) )
-                  });
-                }
-              }else{
-                console.log("ITS HERE 2",room.players[room.smallBlindIndex]);
-                if (room.players[room.smallBlindIndex].chips <= room.smallBlind) {
-                  sbChips = room.players[room.smallBlindIndex].chips;
-                  var previousBalance = room.players[room.smallBlindIndex].chips;
-                  room.players[room.smallBlindIndex].allIn = true;
-                  room.players[room.smallBlindIndex].talked = true;
-                  room.game.bets[room.smallBlindIndex] = parseFloat(room.players[room.smallBlindIndex].chips);
-                  room.game.history.push({
-                    time: new Date(),
-                    playerId: room.players[room.smallBlindIndex].id,
-                    playerName: room.players[room.smallBlindIndex].playerName,
-                    gameRound: room.game.roundName,
-                    totalPot:0,
-                    betAmount: parseFloat( parseFloat( room.players[room.smallBlindIndex].chips ).toFixed(4) ),
-                    totalBetAmount: parseFloat( parseFloat( room.smallBlind ).toFixed(4) ),
-                    playerAction: Sys.Config.Texas.AllIn,
-                    remaining: 0,
-                    "boardCard":room.game.board.length ? room.game.board:"",
-                  });
-                  room.players[room.smallBlindIndex].chips = 0;
-                  room.game.gameTotalChips= parseFloat(parseFloat(room.game.gameTotalChips) + parseFloat(room.players[room.smallBlindIndex].chips));
-                } else {
-                  var previousBalance = room.players[room.smallBlindIndex].chips;
-                  sbChips = room.smallBlind;
-                  room.players[room.smallBlindIndex].chips -= room.smallBlind;
-                  room.game.gameTotalChips= parseFloat(parseFloat(room.game.gameTotalChips) + parseFloat(sbChips));
-                  room.game.bets[room.smallBlindIndex] = room.smallBlind;
-                  room.game.history.push({
-                    time: new Date(),
-                    playerId: room.players[room.smallBlindIndex].id,
-                    playerName: room.players[room.smallBlindIndex].playerName,
-                    gameRound: room.game.roundName,
-                    betAmount: parseFloat( parseFloat( room.smallBlind ).toFixed(4) ),
-                    totalBetAmount: parseFloat( parseFloat( room.smallBlind).toFixed(4) ),
-                    totalPot:0,
-                    "boardCard":room.game.board.length ? room.game.board:"",
-                    playerAction: Sys.Config.Texas.SmallBlind,
-                    remaining: parseFloat( parseFloat(room.players[room.smallBlindIndex].chips).toFixed(4) )
-                  });
-                }
+          
+              console.log("ITS HERE 2",room.players[room.smallBlindIndex]);
+              if (room.players[room.smallBlindIndex].chips <= room.smallBlind) {
+                sbChips = room.players[room.smallBlindIndex].chips;
+                var previousBalance = room.players[room.smallBlindIndex].chips;
+                room.players[room.smallBlindIndex].allIn = true;
+                room.players[room.smallBlindIndex].talked = true;
+                room.game.bets[room.smallBlindIndex] = parseFloat(room.players[room.smallBlindIndex].chips);
+                room.game.history.push({
+                  time: new Date(),
+                  playerId: room.players[room.smallBlindIndex].id,
+                  playerName: room.players[room.smallBlindIndex].playerName,
+                  gameRound: room.game.roundName,
+                  totalPot:0,
+                  betAmount: parseFloat( parseFloat( room.players[room.smallBlindIndex].chips ).toFixed(4) ),
+                  totalBetAmount: parseFloat( parseFloat( room.smallBlind ).toFixed(4) ),
+                  playerAction: Sys.Config.Texas.AllIn,
+                  remaining: 0,
+                  "boardCard":room.game.board.length ? room.game.board:"",
+                });
+                room.players[room.smallBlindIndex].chips = 0;
+                room.game.gameTotalChips= parseFloat(parseFloat(room.game.gameTotalChips) + parseFloat(room.players[room.smallBlindIndex].chips));
+              } else {
+                var previousBalance = room.players[room.smallBlindIndex].chips;
+                sbChips = room.smallBlind;
+                room.players[room.smallBlindIndex].chips -= room.smallBlind;
+                room.game.gameTotalChips= parseFloat(parseFloat(room.game.gameTotalChips) + parseFloat(sbChips));
+                room.game.bets[room.smallBlindIndex] = room.smallBlind;
+                room.game.history.push({
+                  time: new Date(),
+                  playerId: room.players[room.smallBlindIndex].id,
+                  playerName: room.players[room.smallBlindIndex].playerName,
+                  gameRound: room.game.roundName,
+                  betAmount: parseFloat( parseFloat( room.smallBlind ).toFixed(4) ),
+                  totalBetAmount: parseFloat( parseFloat( room.smallBlind).toFixed(4) ),
+                  totalPot:0,
+                  "boardCard":room.game.board.length ? room.game.board:"",
+                  playerAction: Sys.Config.Texas.SmallBlind,
+                  remaining: parseFloat( parseFloat(room.players[room.smallBlindIndex].chips).toFixed(4) )
+                });
               }
-              //}
-
+              
               let transactionDataSB = {
                 user_id: room.players[room.smallBlindIndex].id,
                 username: room.players[room.smallBlindIndex].playerName,
@@ -1083,52 +878,7 @@ class Room {
               }
               await Sys.Game.CashGame.Texas.Services.PlayerAllTransectionService.createTransaction(transactionDataBBPot);
               
-              console.log("big blind gamePortData: ", gamePortData);
-
-              for(let i = 0; i < room.players.length; i++){
-                if(room.players[i].waitForBigBlindCheckbox == true && room.players[i].waitForBigBlindCheckboxValue == false && room.players[i].status != 'Waiting' && i != room.smallBlindIndex && i != room.bigBlindIndex){
-                  if (room.players[i].chips <= room.bigBlind) {
-                    bbChips = room.players[i].chips;
-                    var previousBalance = room.players[i].chips;
-                    room.players[i].allIn = true;
-                    room.players[i].talked = true;
-                    room.game.bets[i] = parseFloat(room.players[i].chips);
-                    room.game.history.push({
-                      time: new Date(),
-                      playerId: room.players[i].id,
-                      playerName: room.players[i].playerName,
-                      gameRound: room.game.roundName,
-                      totalPot:0,
-                      "boardCard":room.game.board.length ? room.game.board:"",
-                      betAmount: parseFloat( parseFloat( room.players[i].chips).toFixed(4) ),
-                      totalBetAmount: parseFloat( parseFloat(room.bigBlind).toFixed(4) ),
-                      playerAction: Sys.Config.Texas.AllIn,
-                      remaining: 0
-                    });
-                    room.game.gameTotalChips = parseFloat(parseFloat(room.game.gameTotalChips) + parseFloat(room.players[i].chips));
-                    room.players[i].chips = 0;
-                  } else {
-                    bbChips = room.bigBlind;
-                    var previousBalance = room.players[i].chips;
-                    room.players[i].chips -= room.bigBlind;
-                    room.game.gameTotalChips= parseFloat(parseFloat(room.game.gameTotalChips) + parseFloat(bbChips));
-                    room.game.bets[i] = parseFloat(room.bigBlind);
-                    room.game.history.push({
-                      time: new Date(),
-                      playerId: room.players[i].id,
-                      playerName: room.players[i].playerName,
-                      gameRound: room.game.roundName,
-                      totalPot:0,
-                      "boardCard":room.game.board.length ? room.game.board:"",
-                      betAmount: parseFloat( parseFloat( room.bigBlind).toFixed(4) ),
-                      totalBetAmount: parseFloat( parseFloat(room.bigBlind).toFixed(4) ),
-                      playerAction: Sys.Config.Texas.BigBlind,
-                      remaining: parseFloat( parseFloat( room.players[i].chips ).toFixed(4) )
-                    });
-                  }
-                }
-              }
-            
+              console.log("big blind gamePortData: ", gamePortData);            
               playersLength =  await room.roomPlayerLength(room);
 
               if (playersLength >= room.minPlayers) {
@@ -1602,8 +1352,6 @@ class Room {
         if(this.players[this.currentPlayer].id != this.players[i].id){
           buttonArray.push({
             playerId : this.players[i].id,
-            sitOutNextHand :  this.players[i].sitOutNextHand,
-            sitOutNextBigBlind :  this.players[i].sitOutNextBigBlind,
             isFold :  this.players[i].isFold,
             isCheck :  this.players[i].isCheck,
             isCall :  this.players[i].isCall,
@@ -1664,7 +1412,7 @@ class Room {
       let newDealerFound = false;
 
       for(let i=0; i < room.players.length; i++){
-        console.log("waitForBigblindevent data1",room.players.length,i, room.players[i].playerName, room.players[i].waitForBigBlindCheckboxValue, room.players[i].waitForBigBlindCheckbox,room.players[i].status)
+        console.log("waitForBigblindevent data1",room.players.length,i, room.players[i].playerName,room.players[i].status)
         if (room.players[i].status != 'Left' && room.players[i].status != 'Ideal' && room.players[i].status != 'Waiting') {
           if(room.players[i].seatIndex > room.dealer){
             room.dealer = room.players[i].seatIndex;
@@ -1687,7 +1435,7 @@ class Room {
         }
       }
     }else{
-      for(let i=0; i < room.players.length; i++){console.log("waitForBigblindevent data2", room.players[i].playerName, room.players[i].waitForBigBlindCheckboxValue, room.players[i].waitForBigBlindCheckbox)
+      for(let i=0; i < room.players.length; i++){console.log("waitForBigblindevent data2", room.players[i].playerName)
         if (room.players[i].status != 'Left' && room.players[i].status != 'Ideal' && room.players[i].status != 'Waiting') {
           if(room.players[i].seatIndex == room.dealer){
             room.dealerIndex = i;
@@ -1744,96 +1492,7 @@ class Room {
       }
     }
 
-    for(let i = 0;i < room.players.length; i++){
-      if(room.players[i].skipDealer == true){
-      let skipDealerIndexes = [];
-      skipDealerIndexes.push(i);
-      console.log("SKIP DEALER",room.dealerIndex)
-        if(i == room.dealerIndex){
-          console.log("ITS HERE 1")
-          room.dealerIndex = room.dealerIndex + 1;
-          room.smallBlindIndex = room.smallBlindIndex + 1;
-          room.bigBlindIndex = room.bigBlindIndex + 1;
-          await this.skipDealer(room, skipDealerIndexes);
-
-          if (room.dealerIndex >= playersLength) {
-            room.dealerIndex = 0;
-          }
-          if (room.dealerIndex >= playersLength) {
-            room.dealerIndex -= playersLength;
-          }
-          if (room.smallBlindIndex >= playersLength) {
-            room.smallBlindIndex = 0;
-          }
-          if (room.smallBlindIndex >= playersLength) {
-            room.smallBlindIndex -= playersLength;
-          } 
-          if (room.bigBlindIndex >= playersLength) {
-            room.bigBlindIndex == room.smallBlindIndex + 1;
-          }
-          if (room.bigBlindIndex >= playersLength) {
-            room.bigBlindIndex -= playersLength;
-          }
-          
-        }
-      }else{
-        if(i == room.dealerIndex && totalPlayers > 2 && room.players[i].waitForBigBlindCheckbox == true && room.players[i].waitForBigBlindCheckboxValue == true){
-          let skipDealerIndexes = [];
-          skipDealerIndexes.push(i);
-          console.log("ITS HERE 2",i,room.dealerIndex,totalPlayers)
-          room.dealerIndex = room.dealerIndex + 1;
-          room.smallBlindIndex = room.smallBlindIndex + 1;
-          room.bigBlindIndex = room.bigBlindIndex + 1;
-          await this.skipDealer(room, skipDealerIndexes);
-          if (room.dealerIndex >= playersLength) {
-            room.dealerIndex = 0;
-          }
-          if (room.dealerIndex >= playersLength) {
-            room.dealerIndex -= playersLength;
-          }
-          if (room.smallBlindIndex >= playersLength) {
-            room.smallBlindIndex = 0;
-          }
-          if (room.smallBlindIndex >= playersLength) {
-            room.smallBlindIndex -= playersLength;
-          } 
-          if (room.bigBlindIndex >= playersLength) {
-            room.bigBlindIndex == room.smallBlindIndex + 1;
-          }
-          if (room.bigBlindIndex >= playersLength) {
-            room.bigBlindIndex -= playersLength;
-          }
-
-        }else if(i == room.dealerIndex + 1 && totalPlayers == 2 && room.players[i].waitForBigBlindCheckbox ==  true && room.players[i].waitForBigBlindCheckboxValue == true){
-          let skipDealerIndexes = [];
-          skipDealerIndexes.push(i);
-          console.log("IT IS SMALL BLIND INDEX")
-          room.dealerIndex = room.dealerIndex + 1;
-          room.smallBlindIndex = room.smallBlindIndex + 1;
-          room.bigBlindIndex = room.bigBlindIndex + 1;
- 
-         // await this.skipDealer(room, skipDealerIndexes);
-          if (room.dealerIndex >= playersLength) {
-            room.dealerIndex = 0;
-          }
-          if (room.dealerIndex >= playersLength) {
-            room.dealerIndex -= playersLength;
-          }
-          if (room.smallBlindIndex >= playersLength) {
-            room.smallBlindIndex = 0;
-          }
-          if (room.smallBlindIndex >= playersLength) {
-            room.smallBlindIndex -= playersLength;
-          } 
-          if (room.bigBlindIndex >= playersLength) {
-            room.bigBlindIndex == room.smallBlindIndex + 1;
-          }
-          if (room.bigBlindIndex >= playersLength) {
-            room.bigBlindIndex -= playersLength;
-          }
-        }
-      }
-    }
+  
     if(room.dealer == room.oldDealerIndex){
       console.log("ITS HERE 3")
       room.dealerIndex = room.dealerIndex + 1;
@@ -1859,8 +1518,7 @@ class Room {
         room.bigBlindIndex -= playersLength;
       }
     }
-
-    
+   
     room.dealer = room.players[room.dealerIndex].seatIndex;
 
     console.log("ROOM PLAYERS LENGTH",room.players.length)
@@ -1878,136 +1536,9 @@ class Room {
     //console.log("--- BB    :::", room.players[room.bigBlindIndex].playerName);
     console.log("-- current player",room.players[room.currentPlayer])
     console.log("----------------------------------------------------------------------");
-
-
-      return room;
+    return room;
   }
 
-
-  async sbBb(room){
-    try{
-      
-      for(let i = 0; i < room.waitingPlayers.length; i++){
-        if(room.waitingPlayers[i].waitForBigBlindCheckbox == true && room.waitingPlayers[i].waitForBigBlindCheckboxValue == true){
-         let isConsiderAsPlayer = false;
-         let seatIndex = [];
-         seatIndex.push(room.waitingPlayers[i].seatIndex);
-         console.log("SEAT INDEX",seatIndex)
-         let playerOfCondition = [];
-         for(let j = 0; j < seatIndex.length; j++){
-            playerOfCondition = room.players.filter((x) => { return x.seatIndex < seatIndex[j] && x.status != 'Ideal'; });
-              if(playerOfCondition.length == 0){
-                playerOfCondition = room.players.filter((x) => { return x.seatIndex > seatIndex[j] && x.status != 'Ideal'; });
-              }
-         }
-  
-         console.log("ALL PLAYERS",playerOfCondition)
-         /* for(let k = 0; k < playerOfCondition.length; k++){
-           if(room.players.length == 2){
-              if(playerOfCondition[k].seatIndex == room.oldDealerIndex && playerOfCondition[k].seatIndex == room.oldSmallBlindIndex){
-                  console.log("PLAYER OF CONDITION IN TWO PLAYERS",playerOfCondition[k])
-                  isConsiderAsPlayer = true;
-              }else{
-                  isConsiderAsPlayer = false;
-              }
-           }else{
-            if(playerOfCondition[k].seatIndex == room.oldBigBlindIndex){
-              console.log("PLAYER OF CONDITION",playerOfCondition[k])
-              for(let l = 0; l < room.players.length; l++){
-                if(room.waitingPlayers[i].seatIndex != 0 && playerOfCondition[playerOfCondition.length - 1].seatIndex != room.oldBigBlindIndex){
-                   isConsiderAsPlayer = false;
-                }else if(room.waitingPlayers[i].seatIndex == 0  && playerOfCondition[playerOfCondition.length - 1].seatIndex != room.oldBigBlindIndex){
-                 isConsiderAsPlayer = false;
-                }else{
-                   isConsiderAsPlayer = true;
-                   if(playerOfCondition[k].seatIndex == room.oldDealerIndex){
-                     room.waitingPlayers[i].skipDealer = true;
-                   }
-                }
-                console.log("IS CONSIDER PLAYER",isConsiderAsPlayer)
-              }
-              
-            }
-           }
-           if(isConsiderAsPlayer ==  true){
-            room.players.push(room.waitingPlayers[i]);
-            room.waitingPlayers.splice(i,1); 
-           }
-         } */
-
-          let playingPlayers = 0;
-          for(let i=0; i < room.players.length; i++){
-            if (room.players[i].status == 'Playing' ) {
-              playingPlayers++;
-            }
-          }
-
-        
-          if(playingPlayers == 2){
-             if(playerOfCondition[playerOfCondition.length - 1].seatIndex == room.oldDealerIndex && playerOfCondition[playerOfCondition.length - 1].seatIndex == room.oldSmallBlindIndex){
-                 console.log("PLAYER OF CONDITION IN TWO PLAYERS",playerOfCondition[playerOfCondition.length - 1])
-               if(room.waitingPlayers[i].seatIndex != 0 && playerOfCondition[playerOfCondition.length - 1].seatIndex != room.oldDealerIndex && playerOfCondition[playerOfCondition.length - 1].seatIndex != room.oldSmallBlindIndex){
-                  isConsiderAsPlayer = false;
-               }else if(room.waitingPlayers[i].seatIndex == 0 && playerOfCondition[playerOfCondition.length - 1].seatIndex != room.oldDealerIndex && playerOfCondition[playerOfCondition.length - 1].seatIndex != room.oldSmallBlindIndex){
-                isConsiderAsPlayer = false;
-               }else{
-                  isConsiderAsPlayer = true;
-               }
-               console.log("IS CONSIDER PLAYER",isConsiderAsPlayer)
-             }
-          }else{
-           if(playerOfCondition[playerOfCondition.length - 1].seatIndex == room.oldBigBlindIndex){
-             console.log("PLAYER OF CONDITION",playerOfCondition[playerOfCondition.length - 1])
-               if(room.waitingPlayers[i].seatIndex != 0 && playerOfCondition[playerOfCondition.length - 1].seatIndex != room.oldBigBlindIndex){
-                  isConsiderAsPlayer = false;
-               }else if(room.waitingPlayers[i].seatIndex == 0  && playerOfCondition[playerOfCondition.length - 1].seatIndex != room.oldBigBlindIndex){
-                isConsiderAsPlayer = false;
-               }else{
-                  isConsiderAsPlayer = true;
-               }
-               console.log("IS CONSIDER PLAYER",isConsiderAsPlayer)
-           }
-          }
-          if(isConsiderAsPlayer ==  true){
-           room.players.push(room.waitingPlayers[i]);
-           room.waitingPlayers.splice(i,1); 
-          }
-        
-
-        }
-      }
-      return room;
-    }catch(e){
-      console.log("Error in SBBB functionality",e)
-      return new Error(e);
-    }
-   
-  }
-
-  async skipDealer(room, skipDealerIndexes){
-    try {
-      console.log("skipDealer function called", room.dealerIndex, skipDealerIndexes);
-      if(skipDealerIndexes.includes(room.dealerIndex)){
-        for (let j = room.dealerIndex; j < room.players.length; j++) {
-          room.dealerIndex = room.dealerIndex + 1;
-          room.smallBlindIndex = room.smallBlindIndex + 1;
-          room.bigBlindIndex = room.bigBlindIndex + 1;
-          if(!skipDealerIndexes.includes(room.dealerIndex)){
-            break;
-          }
-        }
-      }
-      console.log("Roles after skipDealer function");
-      console.log("D", room.dealerIndex);
-      console.log("SB", room.smallBlindIndex);
-      console.log("BB", room.bigBlindIndex);
-      console.log("-------------------------------");
-      return;
-    } catch (error) {
-      console.log("Catched Error in skipDealer", error);
-      return;
-    }
-  }
 }
 
 module.exports = Room

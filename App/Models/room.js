@@ -2,9 +2,9 @@ const mongoose = require('mongoose');
 const Schema = mongoose.Schema;
 const RoomSchema = new Schema({
     tableNumber     : { type: 'string', required: true },
-    dealer		    : { type: 'number', required: true },
+    dealer		      : { type: 'number', required: true },
     smallBlind      : { type: 'number', required: true },
-    bigBlind	    : { type: 'number', required: true },
+    bigBlind	      : { type: 'number', required: true },
     smallBlindIndex : { type: 'number', required: true },
     bigBlindIndex   : { type: 'number', required: true },
     minPlayers      : { type: 'number', required: true },

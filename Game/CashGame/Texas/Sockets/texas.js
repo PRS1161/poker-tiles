@@ -10,27 +10,27 @@ module.exports = function (Socket) {
 
     Socket.on("SubscribeRoom",async function(data,responce) {
       console.log("SubscribeRoom  Called :",data);
-      responce(await Sys.Game.CashGame.Texas.Controllers.RoomController.subscribeRoom(Socket,data));
+      responce(await Sys.Game.CashGame.Texas.newControllers.RoomController.subscribeRoom(Socket,data));
     });
     
     Socket.on("ReconnectGame",async function(data,responce) {
       console.log("ReconnectGame Regualer Called :",data);
-      responce(await Sys.Game.CashGame.Texas.Controllers.RoomController.reconnectGame(Socket,data));
+      responce(await Sys.Game.CashGame.Texas.newControllers.RoomController.reconnectGame(Socket,data));
     });
 
     Socket.on("UnSubscribeRoom",async function(data,responce) {
       console.log("UnSubscribeRoom  Called :",data);
-      responce(await Sys.Game.CashGame.Texas.Controllers.RoomController.unSubscribeRoom(Socket,data));
+      responce(await Sys.Game.CashGame.Texas.newControllers.RoomController.unSubscribeRoom(Socket,data));
     });
 
     Socket.on("JoinRoom",async function(data,responce) {
       console.log("1 JoinRoom  Called :",data);
-      responce(await Sys.Game.CashGame.Texas.Controllers.RoomController.joinRoom(Socket,data));
+      responce(await Sys.Game.CashGame.Texas.newControllers.RoomController.joinRoom(Socket,data));
     });
 
     Socket.on("LeaveRoom",async function(data,responce) {
       console.log("LeaveRoom  Called :",data);
-      responce(await Sys.Game.CashGame.Texas.Controllers.RoomController.leaveRoom(Socket,data));
+      responce(await Sys.Game.CashGame.Texas.newControllers.RoomController.leaveRoom(Socket,data));
     });
 
     Socket.on("SitOutNextHand",async function(data,responce) {
@@ -49,7 +49,7 @@ module.exports = function (Socket) {
       console.log("-------------------------------------------------");
       console.log(" PlayerAction  Called ::-> ",data);
       console.log("-------------------------------------------------");
-      responce(await Sys.Game.CashGame.Texas.Controllers.PlayerController.playerAction(Socket,data));
+      responce(await Sys.Game.CashGame.Texas.newControllers.PlayerController.playerAction(Socket,data));
     });
 
     Socket.on("GetPlayerReBuyInChips",async function(data,responce) {
@@ -69,7 +69,7 @@ module.exports = function (Socket) {
 
     Socket.on("PlayerOnline",async function(data,responce) {
       console.log("PlayerOnline Called :",data);
-      responce(await Sys.Game.CashGame.Texas.Controllers.RoomController.playerOnline(Socket,data));
+      responce(await Sys.Game.CashGame.Texas.newControllers.RoomController.playerOnline(Socket,data));
     });
 
     // show cards event
@@ -81,7 +81,7 @@ module.exports = function (Socket) {
     // prebets
     Socket.on("DefaultActionSelection",async function(data,responce) {
       console.log("DefaultActionSelection Called :",data);
-      responce(await Sys.Game.CashGame.Texas.Controllers.RoomController.defaultActionSelection(Socket,data));
+      responce(await Sys.Game.CashGame.Texas.newControllers.RoomController.defaultActionSelection(Socket,data));
     });
 
     Socket.on("disconnect",async function() {
