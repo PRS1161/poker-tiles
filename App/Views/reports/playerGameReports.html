@@ -1,0 +1,366 @@
+{% extends "partition/layout.html" %}
+
+{% block body %}
+
+	<!-- Main Content -->
+	<div class="page-wrapper">
+		<div class="container-fluid">
+
+			<!-- Title -->
+			<section class="content-header">
+				<h1>Player Reports</h1>
+				<ol class="breadcrumb">
+					<li><a href="/dashboard">Dashboard</a></li>
+					<li class="active">Player Report</li>
+				</ol>
+			</section>
+			<!-- /Title -->
+			{% include "partition/notification.html" %}
+			<!-- Row -->
+			<section class="content">
+				<div class="row">
+						<input type="hidden" id="sessionId" name="sessionId" value="{{sessionId}}">
+						<input type="hidden" id="userId" name="userId" value="{{userId}}">
+					<div class="col-sm-12">
+						<div class="panel panel-default card-view">
+							<div class="panel-heading">
+								<div class="row">
+									<div class="col-lg-3">
+										<div class="form-group">
+											<input type="text" class="form-control pull-right" id="reservation" name="range" placeholder="select range">
+										</div>
+									</div>
+									<div class="col-md-3">
+										<div class="form-group">
+											<div class="input-group input-group-sm">
+												<span class="input-group-addon">Type</span>
+												<select id="types" class="form-control ">
+													{%for type in types %}
+													<option value={{type.name}}>{{type.value}}</option>
+													{%endfor%}
+												</select>
+											</div>
+										</div>
+									</div> 
+									<div class="form-group col-md-1">
+										<a id="submit" class=" addacbtn ladda-button btn btn-success btn-sm">
+											<span>&nbsp;Submit</span></a>
+									</div>
+									<div class="col-md-2" id="balance_div" style="display: none;">
+									<!-- </div>
+									<div class="col-md-2"> -->
+										<label>Opening Balance: </label> <span id="opening_balance" style="margin-right: 5px;">0.00</span><br/>
+										<label>Closing Balance: </label> <span id="closing_balance" style="margin-right: 10px;">0.00</span><br/>
+									</div>
+									
+			        				{% if Agent.role=='admin' %}
+									<div id="playerNevigation" style="font-weight: bold;font-size: 18px" class="col-md-12"></div>
+						        {% endif %}	
+								</div>
+							</div>
+							<div class="panel-wrapper collapse in">
+								<div class="panel-body">
+									<div class="table-wrap">
+										<div class="table-responsive">
+											<input type="hidden" id="gameType"  name="gametype">
+											<table id="myTable" class="table table-hover display  pb-30" >
+												<thead>
+													<tr>
+														<th>Date & Time</th>
+														<th>Game Id</th>
+														<th>Session Id</th>
+														<th>Transaction Id</th>
+														{# <th>From/To</th> #}
+														<th>In</th>
+														<th>Out</th>
+														<th>Updated Balance</th>
+														<th>Type</th>
+														<th>Remark</th>
+													</tr>
+												</thead>
+												<tbody></tbody>
+											</table>
+										</div>
+									</div>
+								</div>
+							</div>
+						</div>
+					</div>
+				</div>
+			</section>
+		</div>
+
+			{% endblock %}
+
+			{% block Jscript %}
+				<script>
+					$(document).ready(function () {
+				 		$("#player").select2();
+						var host = window.location.origin;
+						$('#myTable').dataTable({
+							"ordering": false,
+							"autoWidth": false,
+							"oLanguage": {
+								"sSearch": "search By Game Id",
+								"sEmptyTable": "No data available"
+							},
+							"pageLength": 100
+						});
+						today = new Date();
+						startDate = new Date(today.getFullYear(), today.getMonth(), 1);
+						endDate = new Date(today.getFullYear(), today.getMonth() + 1, 0);
+						startDate.setHours(00, 00, 00, 000);
+						endDate.setHours(23, 59, 59, 999);
+						var start = moment().subtract(29, 'days');
+						var end = moment();
+						$('#reservation').daterangepicker({
+							locale: {
+								format: "YYYY-MM-DD"
+							},
+							startDate: startDate,
+							endDate: endDate
+						});
+
+
+					$('#myTable').dataTable().fnDestroy();
+							var date = $('#reservation').val().split(' - ');
+							let types = $('#types').val();
+							let sessionId = $('#sessionId').val();
+							let userId = $('#userId').val();
+							console.log(userId,sessionId)
+							$('#myTable').DataTable({
+								"oLanguage": {
+									"sSearch": "search By Game Id"
+								},
+								// "scrollX": true,
+								"processing": true,
+								"serverSide": true,
+								"searching": true,
+								"ordering": false,
+								"autoWidth": false,
+								"pageLength": 100,
+								//"ajax": host + "/playerRepots/getData?startDate=" + date[0] + "&endDate=" + date[1] + "&types=" + types + "&player=" + player,
+								ajax:{
+									"type" : "GET",
+									"url" : host + "/playerGameRepots/getData?startDate=" + date[0] + "&endDate=" + date[1]+ "&types="+types + "&sessionId=" + sessionId + "&userId=" + userId,
+									"dataSrc": function ( json ) {
+
+										if(json.closingData){
+											$('#closing_balance').html(parseFloat(json.closingData).toFixed(2));
+										} else{
+											$('#closing_balance').html('0.00');
+										}
+										if(json.openingData){
+											$('#opening_balance').html(parseFloat(json.openingData).toFixed(2));
+										} else{
+											$('#opening_balance').html('0.00');
+										}
+										if(json.id){
+											$('#playerNevigation').html(json.id);
+										}
+										if(json.total_balance){
+											$('#total_balance').html(parseFloat(json.total_balance).toFixed(2));
+										} else{
+											$('#total_balance').html('0.00');
+										} 
+	
+										$('#balance_div').show();
+										return json.data;
+									}
+								},
+								"columns": [
+									{
+										"data": "createdAt",
+										render: function (data, type, row) {
+
+											let dt = new Date(row.createdAt);
+											let date = dt.getDate();
+											let month = parseInt(dt.getMonth() + 1);
+											let year = dt.getFullYear();
+											let hours = dt.getHours();
+											let minutes = dt.getMinutes();
+											let ampm = hours >= 12
+												? 'pm'
+												: 'am';
+											hours = hours % 12;
+											hours = hours
+												? hours
+												: 12;
+											minutes = minutes < 10
+												? '0' + minutes
+												: minutes;
+											let createdAt = year + '/' + month + '/' + date + ' ' + hours + ':' + minutes + ' ' + ampm;
+											return createdAt;
+										}
+									}, {
+										"data": "action",
+										render: function (data, type, row) {
+											return row.gameNumber = row.gameNumber != undefined
+												?row.gameNumber : "-"
+										}
+									}, {
+										"data": "sessionId",render:function (data, type, row) {
+											return row.sessionId = row.sessionId != undefined ? row.sessionId: "-";
+										}
+									},{
+										"data": "transactionNumber",render: function (data, type, row) {
+											return row.transactionNumber = row.transactionNumber != undefined ? row.transactionNumber: "-";
+										}
+
+									},  
+									 {
+										"data": "chips",
+										render: function (data, type, row) {
+											return row.category=="credit"|| row.type=="Opening" ? "<p style='color:green;'>" + parseFloat(row. chips).toFixed(2) + "</p>":"-";
+										}
+									}, {
+										"data": "chips",
+										render: function (data, type, row) {
+										return row.category=="debit" && row.chips || row.type=="Opening"  ? "<p style='color:red;'>" + parseFloat(row.chips).toFixed(2) + "</p>": row.category=="credit" && row.bet_amount ?  "<p style='color:red;'>" + parseFloat(row.bet_amount).toFixed(2) + "</p>":"-";
+										}
+									}, {
+										"data": "afterBalance",
+										render: function (data, type, row) {
+											return row.afterBalance = row.afterBalance != undefined
+												? parseFloat(row.afterBalance).toFixed(2)
+												: "-";
+										}
+									}, {
+										"data": "type",
+										render: function (data, type, row) {
+											return row
+												.type
+												.charAt(0)
+												.toUpperCase() + row
+												.type
+												.slice(1);
+										}
+									}, {
+										"data": "remark"
+									}
+								]
+							});
+						
+					$('body').on('click', '#submit', function () {
+							$('#myTable').dataTable().fnDestroy();
+							var date = $('#reservation').val().split(' - ');
+							let types = $('#types').val();
+							let sessionId = $('#sessionId').val();
+							let userId = $('#userId').val();
+							console.log(userId,sessionId)
+							$('#myTable').DataTable({
+								"oLanguage": {
+									"sSearch": "Game Id"
+								},
+								// "scrollX": true,
+								"processing": true,
+								"serverSide": true,
+								"searching": true,
+								"ordering": false,
+								"autoWidth": false,
+								"pageLength": 100,
+								//"ajax": host + "/playerRepots/getData?startDate=" + date[0] + "&endDate=" + date[1] + "&types=" + types + "&player=" + player,
+								ajax:{
+									"type" : "GET",
+									"url" : host + "/playerGameRepots/getData?startDate=" + date[0] + "&endDate=" + date[1]+ "&types="+types + "&sessionId=" + sessionId + "&userId=" + userId,
+									"dataSrc": function ( json ) {
+
+										if(json.closingData){
+											$('#closing_balance').html(parseFloat(json.closingData).toFixed(2));
+										} else{
+											$('#closing_balance').html('0.00');
+										}
+										if(json.openingData){
+											$('#opening_balance').html(parseFloat(json.openingData).toFixed(2));
+										} else{
+											$('#opening_balance').html('0.00');
+										}
+										if(json.id){
+											$('#playerNevigation').html(json.id);
+										}
+										if(json.total_balance){
+											$('#total_balance').html(parseFloat(json.total_balance).toFixed(2));
+										} else{
+											$('#total_balance').html('0.00');
+										} 
+	
+										$('#balance_div').show();
+										return json.data;
+									}
+								},
+								"columns": [
+									{
+										"data": "createdAt",
+										render: function (data, type, row) {
+
+											let dt = new Date(row.createdAt);
+											let date = dt.getDate();
+											let month = parseInt(dt.getMonth() + 1);
+											let year = dt.getFullYear();
+											let hours = dt.getHours();
+											let minutes = dt.getMinutes();
+											let ampm = hours >= 12
+												? 'pm'
+												: 'am';
+											hours = hours % 12;
+											hours = hours
+												? hours
+												: 12;
+											minutes = minutes < 10
+												? '0' + minutes
+												: minutes;
+											let createdAt = year + '/' + month + '/' + date + ' ' + hours + ':' + minutes + ' ' + ampm;
+											return createdAt;
+										}
+									}, {
+										"data": "action",
+										render: function (data, type, row) {
+											return row.gameNumber = row.gameNumber != undefined
+												?row.gameNumber : "-"
+										}
+									}, {
+										"data": "sessionId",render:function (data, type, row) {
+											return row.sessionId = row.sessionId != undefined ? row.sessionId: "-";
+										}
+									},{
+										"data": "transactionNumber",render: function (data, type, row) {
+											return row.transactionNumber = row.transactionNumber != undefined ? row.transactionNumber: "-";
+										}
+
+									},  {
+										"data": "chips",
+										render: function (data, type, row) {
+											return row.category=="credit"|| row.type=="Opening"? "<p style='color:green;'>" + parseFloat(row. chips).toFixed(2) + "</p>":"-";
+										}
+									}, {
+										"data": "chips",
+										render: function (data, type, row) {
+										return row.category=="debit" && row.chips || row.type=="Opening" ? "<p style='color:red;'>" + parseFloat(row.chips).toFixed(2) + "</p>": row.category=="credit" && row.bet_amount ?  "<p style='color:red;'>" + parseFloat(row.bet_amount).toFixed(2) + "</p>":"-";
+										}
+									}, {
+										"data": "afterBalance",
+										render: function (data, type, row) {
+											return row.afterBalance = row.afterBalance != undefined
+												? parseFloat(row.afterBalance).toFixed(2)
+												: "-";
+										}
+									}, {
+										"data": "type",
+										render: function (data, type, row) {
+											return row
+												.type
+												.charAt(0)
+												.toUpperCase() + row
+												.type
+												.slice(1);
+										}
+									}, {
+										"data": "remark"
+									}
+								]
+							});
+
+					});
+});
+				</script>
+			{% endblock %}

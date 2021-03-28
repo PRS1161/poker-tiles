@@ -1,0 +1,251 @@
+{% extends "partition/layout.html" %}
+
+{% block body %}
+
+	<!-- Main Content -->
+	<div class="page-wrapper">
+		<div class="container-fluid">
+
+			<!-- Title -->
+			<section class="content-header">
+				<h1>Transaction Reports</h1>
+				<ol class="breadcrumb">
+					<li>
+						<a href="#">
+							<i class="fa fa-dashboard"></i> Dashboard</a>
+					</li>
+					<li class="active">Transaction Reports</li>
+				</ol>
+			</section>
+			<!-- /Title -->
+			{% include "partition/notification.html" %}
+			<!-- Row -->
+			<section class="content">
+				<div class="row">
+					<div class="col-sm-12">
+						<div class="panel panel-default card-view">
+							<div class="panel-heading">
+								<div class="row">
+									<div class="col-lg-3">
+										<div class="form-group">
+											<input type="text" class="form-control pull-right" id="reservation" name="range" placeholder="select range">
+										</div>
+									</div>
+							
+									<div class="col-sm-2">
+										<div class="form-group">
+											<div class="input-group input-group-sm">
+												<span class="input-group-addon">Type</span>
+												<select id="types" class="form-control ">
+													{%for type in types %}
+													<option value={{type.name}}>{{type.value}}</option>
+													{%endfor%}
+												</select>
+											</div>
+										</div>
+									</div>
+									<!-- div class="col-sm-2">
+										<div class="form-group">
+											<div class="input-group input-group-sm">
+												<span class="input-group-addon">Category</span>
+												<select id="category" class="form-control ">
+													{%for category in category %}
+													<option value={{category.name}}>{{category.value}}</option>
+													{%endfor%}
+												</select>
+											</div>
+										</div>
+									</div>  -->
+									<div class="form-group col-md-1">
+										<a id="submit" class=" addacbtn ladda-button btn btn-success btn-sm">
+											<span>&nbsp;Submit</span></a>
+									</div>
+								</div>
+							</div>
+							<div class="panel-wrapper collapse in">
+								<div class="panel-body">
+									<div class="table-wrap">
+										<div class="table-responsive">
+											<input type="hidden" id="gameType"  name="gametype">
+											<table id="myTable" class="table table-hover display  pb-30" >
+												<thead>
+													<tr>
+														<th>Date&Time</th>
+														 <th>Transaction Id</th>
+<!-- 														<th>trx- Number</th>
+ -->														<th>Provider Role</th>
+														<th>From</th>
+														<th>provider</th>
+														<th>To</th>
+														<th>Receiver Role</th>
+														<th>Receiver</th>
+														<th>Before Balance</th>
+														<th>In</th>
+														<th>Out</th>
+														<th>Updated Balance</th>
+														<!-- <th>Type</th> -->
+													</tr>
+												</thead>
+												<tbody></tbody>
+											</table>
+										</div>
+									</div>
+								</div>
+							</div>
+						</div>
+					</div>
+				</div>
+			</section>
+		</div>
+
+			{% endblock %}
+
+			{% block Jscript %}
+				<script>
+					$(document).ready(function () {
+						var host = window.location.origin;
+						$('#myTable').dataTable({
+							"ordering": false,
+							"autoWidth": false,
+							"pageLength": 25
+						});
+						today = new Date();
+						startDate = new Date(today.getFullYear(), today.getMonth(), 1);
+						endDate = new Date(today.getFullYear(), today.getMonth() + 1, 0);
+						startDate.setHours(00, 00, 00, 000);
+						endDate.setHours(23, 59, 59, 999);
+						var start = moment().subtract(29, 'days');
+						var end = moment();
+						$('#reservation').daterangepicker({
+							locale: {
+								format: "YYYY-MM-DD"
+							},
+							startDate: startDate,
+							endDate: endDate
+						});
+						$('body').on('click', '#submit', function () {
+							$('#myTable').dataTable().fnDestroy();
+							var date = $('#reservation').val().split(' - ');
+							let types = $('#types').val();
+							let category = $('#category').val();
+							console.log("CAT",category)
+							$('#myTable').DataTable({
+								// "scrollX": true,
+								"processing": true,
+								"serverSide": true,
+								"ordering": false,
+								"autoWidth": false,
+								"pageLength": 100,
+								ajax:{
+									"type" : "GET",
+									"url" : host + "/transactionReports/getData?startDate=" + date[0] + "&endDate=" + date[1] + "&types=" + types +"&category=" + category,
+								},
+								"columns": [
+									{
+										"data": "createdAt",
+										render: function (data, type, row) {
+											let dt = new Date(row.createdAt);
+											let date = dt.getDate();
+											let month = parseInt(dt.getMonth() + 1);
+											let year = dt.getFullYear();
+											let hours = dt.getHours();
+											let minutes = dt.getMinutes();
+											let ampm = hours >= 12
+												? 'pm'
+												: 'am';
+											hours = hours % 12;
+											hours = hours
+												? hours
+												: 12;
+											minutes = minutes < 10
+												? '0' + minutes
+												: minutes;
+											let createdAt = year + '/' + month + '/' + date + ' ' + hours + ':' + minutes + ' ' + ampm;
+											return createdAt;
+										}
+									},
+									// {
+									// 	"data": "transactionNumber",render: function (data, type, row) {
+									// 		return row.transactionNumber = row.transactionNumber != undefined ? row.transactionNumber: "-";
+									// 	}
+									// },	
+														 {
+										"data": "transactionNumber"
+									}, 
+									 {
+										"data": "providerRole",render: function (data, type, row) {
+											return row.providerRole = row.providerRole != undefined ? row.providerRole: "-";
+										}
+									}, {
+										"data": "providerId",render: function (data, type, row) {
+											return row.providerId = row.providerId != undefined ? row.providerId: "-";
+										}
+									},
+			
+									{
+										"data": "providerUsername",render: function (data, type, row) {
+											return row.providerUsername = row.providerUsername != undefined ? row.providerUsername: "-";
+										}
+									},
+									
+									{
+										"data": "receiverId",render: function (data, type, row) {
+											return row.receiverId = row.receiverId != undefined ? row.receiverId: "-";
+										} 
+									},{
+										"data": "receiverRole",render: function (data, type, row) {
+											return row.receiverRole = row.receiverRole != undefined ? row.receiverRole: "-";
+										}
+									},{
+										"data": "receiverUsername",render: function (data, type, row) {
+											return row.receiverUsername = row.receiverUsername != undefined ? row.receiverUsername: "-";
+										}
+									},
+									 {
+										"data": "beforeBalance",
+										render: function (data, type, row) {
+											return row.beforeBalance = row.beforeBalance != undefined
+												? parseFloat(row.beforeBalance).toFixed(2)
+												: "-";
+										}
+									},
+									{
+										"data": "in",
+										render: function (data, type, row) {
+											return row.in = row.in != undefined
+												? "<p style='color:green;'>" + parseFloat(row. in).toFixed(2) + "</p>"
+												: "-";
+										}
+									}, {
+										"data": "out",
+										render: function (data, type, row) {
+											return row.out = row.out != undefined
+												? "<p style='color:red;'>" + parseFloat(row.out).toFixed(2) + "</p>"
+												: "-";
+										}
+									}, {
+										"data": "afterBalance",
+										render: function (data, type, row) {
+											return row.afterBalance = row.afterBalance != undefined
+												? parseFloat(row.afterBalance).toFixed(2)
+												: "-";
+										}
+									}, 
+									// {
+									// 	"data": "type",
+									// 	render: function (data, type, row) {
+									// 		return row
+									// 			.type
+									// 			.charAt(0)
+									// 			.toUpperCase() + row
+									// 			.type
+									// 			.slice(1);
+									// 	}
+									// }, 
+								]
+							});
+
+						});
+					});
+				</script>
+			{% endblock %}

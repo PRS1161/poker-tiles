@@ -42,8 +42,6 @@ module.exports = {
                 }
 				/** End ::: Custom code for Side Pot Two Player (code is Petch) */
 				result.history = room.game.history
-				result.currentRound = room.game.roundName
-				result.cards = room.game.board
 				result.potAmount = room.game.pot
 				result.PlayerSidePot = {
 					sidePot : sidePot,
@@ -76,7 +74,7 @@ module.exports = {
 						if(room.players[i].status == 'Playing' && room.players[i].folded == false){
 							playersCards.push({
 								playerId : room.players[i].id,
-								cards : ['BC','BC']
+								cards : ['BC', 'BC', 'BC', 'BC', 'BC', 'BC']
 							});
 						}
 					}
@@ -289,8 +287,6 @@ module.exports = {
 				console.log("sidepot and gamepot updates in reconnect", sidePot);
 
 				result.history = room.game.history
-				result.currentRound = room.game.roundName
-				result.cards = room.game.board
 				result.potAmount = room.game.pot
 				result.PlayerSidePot = {
 					sidePot : sidePot,
@@ -323,7 +319,7 @@ module.exports = {
 						if(room.players[i].status == 'Playing' && room.players[i].folded == false){
 							playersCards.push({
 								playerId : room.players[i].id,
-								cards : ['BC','BC']
+								cards : ['BC', 'BC', 'BC', 'BC', 'BC', 'BC']
 							});
 						}
 					}
@@ -480,7 +476,7 @@ module.exports = {
 					if(room.players[i].status == 'Playing'){
 						playersCards.push({
 							playerId : room.players[i].id,
-							cards : ['BC','BC']
+							cards : ['BC', 'BC', 'BC', 'BC', 'BC', 'BC']
 						});
 					}
 				}

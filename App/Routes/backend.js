@@ -113,6 +113,15 @@ router.get('/dashboardChart/getMonthlyPlayedGameChart', Sys.App.Controllers.Dash
 
 router.get('/dashboardChart/getGameUsageChart', Sys.App.Controllers.Dashboard.getGameUsageChart);
 
+/***
+
+	Reports Route
+
+**/
+router.get('/playerReports',Sys.App.Middlewares.Backend.Authenticate,Sys.App.Middlewares.Backend.HasRole('admin','master','agent','childAgent'),Sys.App.Controllers.ReportsController.playerReports);
+router.get('/playerRepots/getData',Sys.App.Middlewares.Backend.Authenticate,Sys.App.Middlewares.Backend.HasRole('admin','master','agent','childAgent'),Sys.App.Controllers.ReportsController.getPlayerReportData);
+router.get('/playerReports/:uniqId/:sessionId', Sys.App.Middlewares.Backend.Authenticate,Sys.App.Middlewares.Backend.HasRole('admin','master','agent','childAgent'),Sys.App.Controllers.ReportsController.allPlayerGame);
+router.get('/playerGameRepots/getData',Sys.App.Middlewares.Backend.Authenticate,Sys.App.Middlewares.Backend.HasRole('admin','master','agent','childAgent'),Sys.App.Controllers.ReportsController.getAllPlayerGameData);
 /**
  * Rest Api Routes Ends Here
  */

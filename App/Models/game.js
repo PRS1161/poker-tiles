@@ -25,10 +25,6 @@ const GameSchema = new Schema({
         type: 'number',
         default: 0
     },
-    roundName: {
-        type: 'string',
-        default: ''
-    },
     betName: {
         type: 'string',
         default: ''
@@ -46,10 +42,6 @@ const GameSchema = new Schema({
         default: []
     },
     board: {
-        type: 'array',
-        default: []
-    },
-    history: {
         type: 'array',
         default: []
     },

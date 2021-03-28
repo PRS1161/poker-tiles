@@ -1,0 +1,246 @@
+{% extends "partition/layout.html" %}
+
+{% block body %}
+
+	<!-- Main Content -->
+	<div class="page-wrapper">
+		<div class="container-fluid">
+
+			<!-- Title -->
+			<section class="content-header">
+				<h1>Player Reports</h1>
+				<ol class="breadcrumb">
+					<li>
+						<a href="#">
+							<i class="fa fa-dashboard"></i> Dashboard</a>
+					</li>
+					<li class="active">Player Reports</li>
+				</ol>
+			</section>
+			<!-- /Title -->
+			{% include "partition/notification.html" %}
+			<!-- Row -->
+			<section class="content">
+				<div class="row">
+					<div class="col-sm-12">
+						<div class="panel panel-default card-view">
+							<div class="panel-heading">
+								<div class="row">
+									
+									<div class="col-md-1">
+											<label>Player</label>
+									</div>
+									<div class="col-md-2">
+										<div class="form-group">
+											<div class="input-group input-group-sm">													
+												<select id="player" class="form-control">
+												{%for player in players %}
+													<option value={{player._id}}>{{player.username}}</option>
+													{%endfor%}
+												</select>
+											</div>
+										</div>
+									</div>
+
+									<div class="form-group col-md-1">
+										<a id="submit" class=" addacbtn ladda-button btn btn-success btn-sm">
+											<span>&nbsp;Submit</span>
+										</a>
+									</div>
+									<div class="col-lg-3">
+										<div class="form-group">
+											<input type="text" class="form-control pull-right" id="reservation" name="range" placeholder="select range">
+										</div>
+									</div>
+									<!-- <div class="col-md-3">
+										<div class="form-group">
+											<div class="input-group input-group-sm">
+												<span class="input-group-addon">Type</span>
+												<select id="types" class="form-control ">
+													{%for type in types %}
+													<option value={{type.name}}>{{type.value}}</option>
+													{%endfor%}
+												</select>
+											</div>
+										</div>
+									</div> -->
+									<div class="col-md-4" id="balance_div" style="display: none;">
+									<!-- </div>
+									<div class="col-md-2"> -->
+									
+									</div>
+			        				{% if Agent.role=='admin' %}
+									<div id="playerNevigation" style="font-weight: bold;font-size: 18px;margin-top: -2%;" class="col-md-12"></div>
+						        {% endif %}	
+								</div>
+							</div>
+							<div class="panel-wrapper collapse in">
+								<div class="panel-body">
+									<div class="table-wrap">
+										<div class="table-responsive">
+											<input type="hidden" id="gameType"  name="gametype">
+											<table id="myTable" class="table table-hover display  pb-30" >
+												<thead>
+													<tr>
+														<th>Date & Time</th>
+														<th>Game Name</th>
+														<th>Game Number</th>
+														<th>From/To</th>
+														<th>Previous Balance</th>
+														<th>In</th>
+														<th>Out</th>
+														<th>After Balance</th>
+														<th>Type</th>
+													</tr>
+												</thead>
+												<tbody></tbody>
+											</table>
+										</div>
+									</div>
+								</div>
+							</div>
+						</div>
+					</div>
+				</div>
+			</section>
+		</div>
+
+			{% endblock %}
+
+			{% block Jscript %}
+				<script>
+					$(document).ready(function () {
+
+						today = new Date();
+						startDate = new Date(today);
+						endDate = new Date(today);
+						startDate.setHours(00, 00, 00, 000);
+						endDate.setHours(23, 59, 59, 999);
+						var start = moment().subtract(29, 'days');
+						var end = moment();
+						$('#reservation').daterangepicker({
+							locale: {
+								format: "YYYY-MM-DD"
+							},
+							startDate: startDate,
+							endDate: endDate
+						});
+
+						$("#player").select2();
+						var host = window.location.origin;
+						
+						getTransData(host + "/get/all/transaction");
+						function getTransData(url){
+							$('#myTable').dataTable().fnDestroy();
+							$('#myTable').DataTable({
+								"oLanguage": {
+									"sSearch": "Game Id"
+								},
+								"processing": true,
+								"serverSide": true,
+								"searching": true,
+								"ordering": false,
+								"autoWidth": false,
+								"lengthMenu": [ 100, 200, 500, 1000],
+								"pageLength": 100,
+								ajax:{
+									"type" : "GET",
+									"url" : url,
+								},
+								"columns": [
+									{
+									"data": "createdAt",
+										render: function (data, type, row) {
+
+											let dt = new Date(row.createdAt);
+											let date = dt.getDate();
+											let month = parseInt(dt.getMonth() + 1);
+											let year = dt.getFullYear();
+											let hours = dt.getHours();
+											let minutes = dt.getMinutes();
+											let ampm = hours >= 12
+												? 'pm'
+												: 'am';
+											hours = hours % 12;
+											hours = hours
+												? hours
+												: 12;
+											minutes = minutes < 10
+												? '0' + minutes
+												: minutes;
+											let createdAt = year + '/' + month + '/' + date + ' ' + hours + ':' + minutes + ' ' + ampm;
+											return createdAt;
+										}
+									}, {
+										"data": "tableName",render: function (data, type, row) {
+											return row.tableName = row.tableName != undefined ? row.tableName: "-";
+										}
+									}, {
+										"data": "gameNumber",render: function (data, type, row) {
+											return row.gameNumber = row.gameNumber != undefined ? row.gameNumber: "-";
+										}
+									}, {
+										"data": "username",render: function (data, type, row) {
+											return row.username = row.username != undefined ? row.username: "-";
+										}
+									}, {
+										"data": "previousBalance",render: function (data, type, row) {
+											return row.previousBalance = row.previousBalance != undefined ? parseFloat(row.previousBalance).toFixed(4): "-";
+										}
+									}, {
+										"data": "chips",
+										render: function (data, type, row) {
+											if(row.category == 'credit'){
+												return "<p style='color:green;'>" + parseFloat(row.chips).toFixed(4) + "</p>";
+											}
+											else{
+												return "<p style='color:green;'>-</p>";
+											}
+										}
+									}, {
+										"data": "chips",
+										render: function (data, type, row) {
+											if(row.category == 'debit'){
+												return"<p style='color:red;'>" + parseFloat(row.chips).toFixed(4) + "</p>";
+											}else{
+												return"<p style='color:red;'>-</p>";
+											}
+										}
+									}, {
+										"data": "afterBalance",
+										render: function (data, type, row) {
+											return row.afterBalance = row.afterBalance != undefined
+												? parseFloat(row.afterBalance).toFixed(2)
+												: "-";
+										}
+									}, {
+										"data": "remark"
+									}
+								]
+							});
+						}
+
+						var isDateFilter = 0;
+						$('#submit').click(function(){
+							let userId = $('#player').val();
+							console.log("userId: ", userId);
+							if(isDateFilter == 1){
+								var url = host + "/get/all/transaction?user_id="+userId+"&startDate=" + date[0] + "&endDate=" + date[1];
+							}else{
+								var url = host + "/get/all/transaction?user_id="+userId;
+							}
+							getTransData(url);
+						});
+
+						$('.applyBtn').click(function(){
+							var isDateFilter = 1;
+							setTimeout(function(){
+								var date = $('#reservation').val().split(' - ');
+								var url = host + "/get/all/transaction?startDate=" + date[0] + "&endDate=" + date[1];
+								console.log("url:", url);
+								getTransData(url);
+							}, 100);
+						});			
+					});
+				</script>
+			{% endblock %}

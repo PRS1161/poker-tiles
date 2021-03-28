@@ -175,10 +175,6 @@ class Room {
     return [];
   }
 
-  getDeal() {
-    return this.game.board;
-  }
-
   getDealer() {
     return this.players[this.dealerIndex];
   }
@@ -620,8 +616,6 @@ class Room {
         console.log("---", room.players[room.smallBlindIndex].playerName);
         console.log("----------------------------------------------------------------------");
 
-        let waitingSbPlayer = false;
-
         for (let i = 0; i < room.players.length; i++) {
           if (room.players[i].status != 'Left' && room.players[i].status != 'Ideal' ) {
             playingCounter++; // Count How Many Player Playing Game.
@@ -663,11 +657,9 @@ class Room {
             room.game = game;
             room.game.status = 'Running';
             room.game.pot = 0;
-            room.game.roundName = 'Preflop'; //Start the first round
             room.game.betName = 'bet'; //bet,raise,re-raise,cap
             room.game.bets.splice(0, room.game.bets.length);
             room.game.deck.splice(0, room.game.deck.length);
-            room.game.board.splice(0, room.game.board.length);
             room.game.history.splice(0, room.game.history.length);
             for (let i = 0; i < room.players.length; i++) {
               room.game.bets[i] = 0;
@@ -725,13 +717,11 @@ class Room {
                   time: new Date(),
                   playerId: room.players[room.smallBlindIndex].id,
                   playerName: room.players[room.smallBlindIndex].playerName,
-                  gameRound: room.game.roundName,
                   totalPot:0,
                   betAmount: parseFloat( parseFloat( room.players[room.smallBlindIndex].chips ).toFixed(4) ),
                   totalBetAmount: parseFloat( parseFloat( room.smallBlind ).toFixed(4) ),
                   playerAction: Sys.Config.Texas.AllIn,
-                  remaining: 0,
-                  "boardCard":room.game.board.length ? room.game.board:"",
+                  remaining: 0
                 });
                 room.players[room.smallBlindIndex].chips = 0;
                 room.game.gameTotalChips= parseFloat(parseFloat(room.game.gameTotalChips) + parseFloat(room.players[room.smallBlindIndex].chips));
@@ -745,11 +735,9 @@ class Room {
                   time: new Date(),
                   playerId: room.players[room.smallBlindIndex].id,
                   playerName: room.players[room.smallBlindIndex].playerName,
-                  gameRound: room.game.roundName,
                   betAmount: parseFloat( parseFloat( room.smallBlind ).toFixed(4) ),
                   totalBetAmount: parseFloat( parseFloat( room.smallBlind).toFixed(4) ),
                   totalPot:0,
-                  "boardCard":room.game.board.length ? room.game.board:"",
                   playerAction: Sys.Config.Texas.SmallBlind,
                   remaining: parseFloat( parseFloat(room.players[room.smallBlindIndex].chips).toFixed(4) )
                 });
@@ -808,9 +796,7 @@ class Room {
                   time: new Date(),
                   playerId: room.players[room.bigBlindIndex].id,
                   playerName: room.players[room.bigBlindIndex].playerName,
-                  gameRound: room.game.roundName,
                   totalPot:0,
-                  "boardCard":room.game.board.length ? room.game.board:"",
                   betAmount: parseFloat( parseFloat( room.players[room.bigBlindIndex].chips).toFixed(4) ),
                   totalBetAmount: parseFloat( parseFloat(room.bigBlind).toFixed(4) ),
                   playerAction: Sys.Config.Texas.AllIn,
@@ -828,9 +814,7 @@ class Room {
                   time: new Date(),
                   playerId: room.players[room.bigBlindIndex].id,
                   playerName: room.players[room.bigBlindIndex].playerName,
-                  gameRound: room.game.roundName,
                   totalPot:0,
-                  "boardCard":room.game.board.length ? room.game.board:"",
                   betAmount: parseFloat( parseFloat( room.bigBlind).toFixed(4) ),
                   totalBetAmount: parseFloat( parseFloat(room.bigBlind).toFixed(4) ),
                   playerAction: Sys.Config.Texas.BigBlind,
@@ -893,8 +877,12 @@ class Room {
                 await new Sys.Game.CashGame.Texas.Entities.Deck().fillDeck(room.game.deck);
                 for (let i = 0; i < room.players.length; i += 1) {
                   if(room.players[i].status == 'Playing' && room.players[i].folded == false){
-                    room.players[i].cards.push(room.game.deck.pop());
-                    room.players[i].cards.push(room.game.deck.pop());
+                    room.players[i].cards.push(room.game.deck[Math.floor(Math.random() * 52)]);
+                    room.players[i].cards.push(room.game.deck[Math.floor(Math.random() * 52)]);
+                    room.players[i].cards.push(room.game.deck[Math.floor(Math.random() * 52)]);
+                    room.players[i].cards.push(room.game.deck[Math.floor(Math.random() * 52)]);
+                    room.players[i].cards.push(room.game.deck[Math.floor(Math.random() * 52)]);
+                    room.players[i].cards.push(room.game.deck[Math.floor(Math.random() * 52)]);
                   }
                 }
                 console.log("room here", JSON.stringify(room.players));
@@ -966,8 +954,12 @@ class Room {
           room.players[i].cards.push('AC');
           room.players[i].cards.push('JD');
         }*/
-        room.players[i].cards.push(room.game.deck.pop());
-        room.players[i].cards.push(room.game.deck.pop());
+        room.players[i].cards.push(room.game.deck[Math.floor(Math.random() * 52)]);
+        room.players[i].cards.push(room.game.deck[Math.floor(Math.random() * 52)]);
+        room.players[i].cards.push(room.game.deck[Math.floor(Math.random() * 52)]);
+        room.players[i].cards.push(room.game.deck[Math.floor(Math.random() * 52)]);
+        room.players[i].cards.push(room.game.deck[Math.floor(Math.random() * 52)]);
+        room.players[i].cards.push(room.game.deck[Math.floor(Math.random() * 52)]);
        }
      }
 
@@ -1182,7 +1174,7 @@ class Room {
       }
 
       minRaisedAmount = (minRaisedAmount < parseFloat(playerChips)) ? minRaisedAmount : parseFloat(playerChips);
-      if(this.roundName != "Preflop" && parseInt(totalBetAmt) == 0 ){
+      if(parseInt(totalBetAmt) == 0 ){
         return {
           allIn : false,
           check : true,
@@ -1411,7 +1403,7 @@ class Room {
       let newDealerFound = false;
 
       for(let i=0; i < room.players.length; i++){
-        console.log("waitForBigblindevent data1",room.players.length,i, room.players[i].playerName,room.players[i].status)
+        console.log("event data1",room.players.length,i, room.players[i].playerName,room.players[i].status)
         if (room.players[i].status != 'Left' && room.players[i].status != 'Ideal' && room.players[i].status != 'Waiting') {
           if(room.players[i].seatIndex > room.dealer){
             room.dealer = room.players[i].seatIndex;
@@ -1434,7 +1426,7 @@ class Room {
         }
       }
     }else{
-      for(let i=0; i < room.players.length; i++){console.log("waitForBigblindevent data2", room.players[i].playerName)
+      for(let i=0; i < room.players.length; i++){console.log("event data2", room.players[i].playerName)
         if (room.players[i].status != 'Left' && room.players[i].status != 'Ideal' && room.players[i].status != 'Waiting') {
           if(room.players[i].seatIndex == room.dealer){
             room.dealerIndex = i;

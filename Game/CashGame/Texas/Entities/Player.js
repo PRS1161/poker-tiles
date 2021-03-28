@@ -194,21 +194,17 @@ class Player {
             //let oldRaisedAmount = Sys.Rooms[roomId].turnBet.raisedAmount;
             let oldRaisedAmount = (Sys.Rooms[roomId].turnBet.raisedAmount == undefined) ? 0 : Sys.Rooms[roomId].turnBet.raisedAmount;
             Sys.Rooms[roomId].turnBet = {action: Sys.Config.Texas.Check, playerId: this.id,betAmount: 0, raisedAmount : oldRaisedAmount, hasRaised: hasRaised, totalBetAmount:parseFloat(Sys.Rooms[roomId].game.bets[Sys.Rooms[roomId].currentPlayer])}
-            let cards=" ";
-        cards= Sys.Rooms[roomId].game.board ? Sys.Rooms[roomId].game.board.join(","): ""
-       cards= cards ? cards.split(","):"";
+            
             Sys.Rooms[roomId].game.history.push({
                 "time": new Date(),
                 "playerId": this.id,
                 "playerName": this.playerName,
-                "gameRound": Sys.Rooms[roomId].game.roundName,
                 "betAmount": 0,
                 "totalBetAmount": parseFloat( parseFloat( this.getTotalBet(roomId) ).toFixed(4) ),
                 "playerAction": Sys.Config.Texas.Check,
                 "totalPot":Sys.Rooms[roomId].game.pot,
                 "hasRaised":   hasRaised ,
-                "remaining": parseFloat( parseFloat( this.chips ).toFixed(4) ),
-                "boardCard":cards
+                "remaining": parseFloat( parseFloat( this.chips ).toFixed(4) )
             })
             Sys.Game.CashGame.Texas.newControllers.PlayerProcess.progress(Sys.Rooms[roomId]);
 
@@ -230,23 +226,19 @@ class Player {
         //Mark the player as folded
         this.folded = true;
         this.talked = true;
-        let cards=" ";
-        cards= Sys.Rooms[roomId].game.board ? Sys.Rooms[roomId].game.board.join(","): ""
-       cards= cards ? cards.split(","):"";
+    
         let oldRaisedAmount = Sys.Rooms[roomId].turnBet.raisedAmount;
         Sys.Rooms[roomId].turnBet = {action: Sys.Config.Texas.Fold, playerId: this.id,betAmount: 0, raisedAmount : oldRaisedAmount, hasRaised: hasRaised, totalBetAmount:parseFloat(Sys.Rooms[roomId].game.bets[Sys.Rooms[roomId].currentPlayer])}
         Sys.Rooms[roomId].game.history.push({
             "time": new Date(),
             "playerId": this.id,
             "playerName": this.playerName,
-            "gameRound": Sys.Rooms[roomId].game.roundName,
             "betAmount": 0,
             "totalBetAmount": parseFloat( parseFloat( this.getTotalBet(roomId) ).toFixed(4) ),
             "playerAction": Sys.Config.Texas.Fold,
             "totalPot":Sys.Rooms[roomId].game.pot,
             "hasRaised": hasRaised ,
             "remaining": parseFloat( parseFloat( this.chips ).toFixed(4) ),
-            "boardCard":cards
         })
 
         /*var tabelId = Sys.Rooms[roomId].id;
@@ -276,19 +268,14 @@ class Player {
         await Sys.Game.CashGame.Texas.Services.PlayerAllTransectionService.createTransaction(transactionData);*/
 
         // show card button broadcast
-       /* console.log("roundName when folded", Sys.Rooms[roomId].game.roundName)
-        if(this.folded ==true && this.status == 'Playing' && Sys.Rooms[roomId].game.roundName == 'River'){
-            //Sys.Rooms[roomId].otherData.lastFoldedPlayerId =  this.id,
-            Sys.Rooms[roomId].lastFoldedPlayerIdArray.push(this.id);
-             console.log("lastplayer folded id when folds", Sys.Rooms[roomId].lastFoldedPlayerIdArray)
-        }*/
+      
         if(this.folded ==true && this.status == 'Playing'){
              Sys.Rooms[roomId].otherData.lastFoldedPlayerId =  this.id;
              console.log("lastplayer folded id when folds", Sys.Rooms[roomId].otherData.lastFoldedPlayerId);
         }
 
         //Attemp to progress the game
-        if(Sys.Rooms[roomId].game.status == "Running" && Sys.Rooms[roomId].game.roundName != "Showdown"){
+        if(Sys.Rooms[roomId].game.status == "Running"){
             if(Sys.Rooms[roomId].getCurrentPlayer().id == this.id){
                 console.log("Game left or folded by  current player");
                 Sys.Game.CashGame.Texas.newControllers.PlayerProcess.progress(Sys.Rooms[roomId]);
@@ -305,11 +292,6 @@ class Player {
                 }
                 Sys.Rooms[roomId].currentPlayer = currentPlayerTemp;
                 console.log("current player After checking for endofround", Sys.Rooms[roomId].currentPlayer)
-            }
-        }else{
-            // for log only
-            if(Sys.Rooms[roomId].game.roundName == "Showdown"){
-                console.log("showdown entry in playerLeft");
             }
         }
         
@@ -372,13 +354,7 @@ class Player {
                 //     myRaisedAmount  = parseFloat(bet - parseFloat(maxBet - yourBetOld));
                 // }
 
-                // add to aggressor
-                if(Sys.Rooms[roomId].game.roundName == 'River'){
-                    Sys.Rooms[roomId].game.aggressorIdArray.push(this.id);
-                    console.log("aggressorIdArray when someone bets", Sys.Rooms[roomId].game.aggressorIdArray);
-                }
-
-
+                
                 console.log("/*************************************/");
                 console.log("My Raised Amount       : ",myRaisedAmount)
                 console.log("Bet                    : ",bet)
@@ -400,22 +376,17 @@ class Player {
                         this.talked = true;
                     }
                 }
-                let cards=" ";
-                cards= Sys.Rooms[roomId].game.board ? Sys.Rooms[roomId].game.board.join(","): ""
-                cards= cards ? cards.split(","):"";
-
+               
                 //Attemp to progress the game
                 Sys.Rooms[roomId].turnBet = {action: Sys.Config.Texas.Bet, playerId: this.id, betAmount: parseFloat(bet), raisedAmount : myRaisedAmount, hasRaised: hasRaised, totalBetAmount:parseFloat(Sys.Rooms[roomId].game.bets[Sys.Rooms[roomId].currentPlayer])}
                 Sys.Rooms[roomId].game.history.push({
                     "time": new Date(),
                     "playerId": this.id,
                     "playerName": this.playerName,
-                    "gameRound": Sys.Rooms[roomId].game.roundName,
                     "betAmount": parseFloat( parseFloat( bet ).toFixed(4) ),
                     "totalBetAmount":  parseFloat( parseFloat( this.getTotalBet(roomId) ).toFixed(4) )+parseFloat( parseFloat( bet ).toFixed(4) ),
                     "playerAction": Sys.Config.Texas.Bet,
                     "totalPot": Sys.Rooms[roomId].game.pot,
-                    "boardCard":cards,
                     "hasRaised":  hasRaised ,
                     "remaining": parseFloat( parseFloat( this.chips ).toFixed(4) )
                 })
@@ -511,25 +482,17 @@ class Player {
                     console.log("roundRaiseAmount in call", this.roundRaisedAmount)
                 }
             }
-
-
-            //Attemp to progress the game
-            //Shiv!@# maxBet-oldBet\
-            let cards=" ";
-            cards= Sys.Rooms[roomId].game.board ? Sys.Rooms[roomId].game.board.join(","): ""
-            cards= cards ? cards.split(","):"";
+           
             let oldRaisedAmount = Sys.Rooms[roomId].turnBet.raisedAmount;
             Sys.Rooms[roomId].turnBet = {action: Sys.Config.Texas.Call, playerId: this.id, betAmount: parseFloat(playerRemainChips), raisedAmount : oldRaisedAmount, hasRaised: hasRaised, totalBetAmount:parseFloat(Sys.Rooms[roomId].game.bets[Sys.Rooms[roomId].currentPlayer])}
             Sys.Rooms[roomId].game.history.push({
                 "time": new Date(),
                 "playerId": this.id,
                 "playerName": this.playerName,
-                "gameRound": Sys.Rooms[roomId].game.roundName,
                 "betAmount": parseFloat( parseFloat( playerRemainChips ).toFixed(4) ),  //Shiv!@#  maxBet-oldBet,
                 "totalBetAmount": parseFloat( parseFloat( this.getTotalBet(roomId) ).toFixed(4) )+ parseFloat( parseFloat( playerRemainChips ).toFixed(4) ),
                 "playerAction": Sys.Config.Texas.Call,
                 "totalPot":Sys.Rooms[roomId].game.pot,
-                "boardCard":cards,
                 "hasRaised":  hasRaised,
                 "remaining": parseFloat( parseFloat(this.chips).toFixed(4) )
             })
@@ -620,11 +583,6 @@ class Player {
                     console.log("raise flow change maxbetONRAISE when all in through raise",  maxBetOnRaise);
                     Sys.Rooms[roomId].game.maxBetOnRaise = maxBetOnRaise;
 
-                    // add to aggressor
-                    if(Sys.Rooms[roomId].game.roundName == 'River'){
-                    Sys.Rooms[roomId].game.aggressorIdArray.push(this.id);
-                        console.log("aggressorIdArray when someone bets", Sys.Rooms[roomId].game.aggressorIdArray);
-                    }
                   }else{
                     myRaisedAmount = Sys.Rooms[roomId].turnBet.raisedAmount;
                     console.log("myRaisedAmount in player else", myRaisedAmount)
@@ -662,21 +620,16 @@ class Player {
         //     var myRaisedAmount = Sys.Rooms[roomId].turnBet.raisedAmount;
         // }
 
-        let cards=" ";
-        cards= Sys.Rooms[roomId].game.board ? Sys.Rooms[roomId].game.board.join(","): ""
-       cards= cards ? cards.split(","):"";
-
+       
         Sys.Rooms[roomId].turnBet = {action: Sys.Config.Texas.AllIn, playerId: this.id, betAmount: parseFloat(allInValue), raisedAmount : myRaisedAmount, hasRaised: hasRaised, totalBetAmount:parseFloat(Sys.Rooms[roomId].game.bets[Sys.Rooms[roomId].currentPlayer])}
         Sys.Rooms[roomId].game.history.push({
             "time": new Date(),
             "playerId": this.id,
             "playerName": this.playerName,
-            "gameRound": Sys.Rooms[roomId].game.roundName,
             "betAmount": parseFloat( parseFloat( allInValue ).toFixed(4) ),
             "totalBetAmount": parseFloat( parseFloat( this.getTotalBet(roomId) ).toFixed(4) )+parseFloat( parseFloat( allInValue ).toFixed(4) ),
             "playerAction": Sys.Config.Texas.AllIn,
             "totalPot":Sys.Rooms[roomId].game.pot,
-            "boardCard":cards,
             "hasRaised":hasRaised ,
             "remaining": parseFloat( parseFloat(this.chips).toFixed(4) )
         })

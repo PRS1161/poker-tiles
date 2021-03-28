@@ -1,0 +1,253 @@
+{% extends "partition/layout.html" %}
+
+{% block body %}
+
+	<!-- Main Content -->
+	<div class="page-wrapper">
+		<div class="container-fluid">
+
+			<!-- Title -->
+			<section class="content-header">
+				<h1>Self Reports</h1>
+				<ol class="breadcrumb">
+					<li><a href="/dashboard">Dashboard</a></li>
+					<li class="active">Self Report</li>
+				</ol>
+			</section>
+			<!-- /Title -->
+			{% include "partition/notification.html" %}
+			<!-- Row -->
+			<section class="content">
+				<div class="row">
+					<div class="col-sm-12">
+						<div class="panel panel-default card-view">
+							<div class="panel-heading">
+								<div class="row">
+
+									<div class="col-lg-2">
+										<div class="form-group">
+										<input type="text" name="agent" id="agent"
+														value="{{Agent.role}}" hidden>
+											<input type="text" class="form-control pull-right" id="reservation" name="range" placeholder="Select Range">
+										</div>
+									</div>
+									<div class="col-md-2">
+											<div class="form-group input-group input-group-sm">
+												<span class="input-group-addon">Type</span>
+												<select id="types" class="form-control ">
+													{%for type in types %}
+														<option value={{type.name}}>{{type.value}}</option>
+														{%endfor%}
+													</select>
+												</div>
+										</div>
+										<div class="col-md-2">
+											<div class="form-group input-group input-group-sm">
+												<span class="input-group-addon">Chips Type</span>
+												<select id="ChipsTypes" class="form-control ">
+													{%for type in ChipsTypes %}
+														<option value={{type.name}}>{{type.value}}</option>
+														{%endfor%}
+													</select>
+												</div>
+										</div>
+											<div class="form-group col-md-1">
+												<a id="submit" class=" addAcBtn ladda-button btn btn-success btn-sm">
+													<span>&nbsp;Submit</span></a>
+											</div>
+												<div class="col-md-4" id="balance_div" style="display: none;">
+										<label>Opening Balance: </label> <span id="opening_balance" style="margin-right: 5px;">0.00</span><br/>
+										<label>Closing Balance: </label> <span id="closing_balance" style="margin-right: 10px;">0.00</span><br/>	
+										{# <label>Total Balance: </label> <span id="total_balance" style="margin-right: 10px;">0.00</span> #}
+									</div>
+										</div>
+									</div>
+									<div class="panel-wrapper collapse in">
+										<div class="panel-body">
+											<div class="table-wrap">
+												<div class="table-responsive">
+													<input type="hidden" id="gameType"  name="gameType">
+													<table id="myTable" class="table table-hover display  pb-30" >
+														<thead>
+															<tr>
+																<th>Date & Time</th>
+																<th>Game Id</th>
+																<th>Transaction Id</th>
+																<th>From/To</th>
+																<th>In</th>
+																<th>Out</th>
+																<th>Balance</th>
+																<th>Type</th>
+																<th>Remark</th>
+															</tr>
+														</thead>
+														<tbody></tbody>
+													</table>
+												</div>
+											</div>
+										</div>
+									</div>
+								</div>
+							</div>
+						</div>
+					</section>
+				</div>
+
+			{% endblock %}
+			{% block Jscript %}
+
+				<script>
+					$(document).ready(function () {
+					let agent=$('#agent').val()
+
+					var start = moment().subtract(29, 'days');
+    var end = moment();
+    $('#reservation').daterangepicker({
+
+        locale: {
+          format:"YYYY-MM-DD"
+        },
+        startDate: start,
+        endDate: end,
+        ranges: {
+           'Today': [moment(), moment()],
+           'Yesterday': [moment().subtract(1, 'days'), moment().subtract(1, 'days')],
+           'Last 7 Days': [moment().subtract(6, 'days'), moment()],
+           'Last 30 Days': [moment().subtract(29, 'days'), moment()],
+		   'Last 365 Days': [moment().subtract(365, 'days'), moment()],
+           // 'This Month': [moment().startOf('month'), moment().endOf('month')],
+           // 'Last Month': [moment().subtract(1, 'month').startOf('month'), moment().subtract(1, 'month').endOf('month')]
+        }
+    });					var host = window.location.origin;
+							$('#myTable').dataTable({
+							"ordering": false,
+							"autoWidth": false,
+							"oLanguage": {
+								"sSearch": "search By Transaction Id",
+								"sEmptyTable": "No data available"
+							},
+							"pageLength": 100
+						});
+						$('body').on('click', '#submit', function () {
+							$('#myTable')
+								.dataTable()
+								.fnDestroy();
+							var date = $('#reservation')
+								.val()
+								.split(' - ');
+							let types = $('#types').val();
+							let ChipsTypes = $('#ChipsTypes').val();
+							$('#myTable').DataTable({
+								"oLanguage": {
+									"sSearch": "search By Transaction Id"
+								},
+								"processing": true,
+								"serverSide": true,
+								"searching": true,
+								"ordering": false,
+								"autoWidth": false,
+								"pageLength": 100,
+								"ajax":{
+								"type" : "GET",
+									"url" :  host + "/selfRepots/getData?startDate=" + date[0] + "&endDate=" + date[1] + "&types=" + types+ "&ChipsTypes=" + ChipsTypes,
+								"dataSrc": function ( json ) {
+										if(json.closingData){
+												$('#closing_balance').html(parseFloat(json.closingData).toFixed(2));
+										} else{
+											$('#closing_balance').html('0.00');
+										}
+
+										if(json.openingData){
+												$('#opening_balance').html(parseFloat(json.openingData).toFixed(2));
+										} else{
+											$('#opening_balance').html('0.00');
+										}
+										if(json.total_balance){
+											$('#total_balance').html(parseFloat(json.total_balance).toFixed(2));
+										} else{
+											$('#total_balance').html('0.00');
+										}
+										$('#balance_div').show();
+										//console.log("json.openingData: ", json.openingData);
+										//console.log("json.closingData: ", json.closingData);
+										return json.data;
+									}
+									},							
+								"columns": [
+									{
+										"data": "createdAt",
+										render: function (data, type, row) {
+											let dt = new Date(row.createdAt);
+											let date = dt.getDate();
+											let month = parseInt(dt.getMonth() + 1);
+											let year = dt.getFullYear();
+											let hours = dt.getHours();
+											let minutes = dt.getMinutes();
+											let ampm = hours >= 12
+												? 'pm'
+												: 'am';
+											hours = hours % 12;
+											hours = hours
+												? hours
+												: 12;
+											minutes = minutes < 10
+												? '0' + minutes
+												: minutes;
+											let createdAt = year + '/' + month + '/' + date + ' ' + hours + ':' + minutes + ' ' + ampm;
+											return createdAt;
+										}
+									}, {
+										"data": "action",
+										render: function (data, type, row) {
+											return row.gameNumber = row.gameNumber
+												?  agent=="admin"?  '<a id="' + row.gameId + '" href="/game/allGameHistory/' + row.gameNumber + '">' + row.gameNumber + '</a>': '<a>' +  row.gameNumber + '</a>'
+												: "-"
+										}
+									}, {
+										"data": "transactionNumber",render: function (data, type, row) {
+											return row.transactionNumber = row.transactionNumber
+												? row.transactionNumber
+												: "-"
+										}
+									}, {
+										"data": "from"
+									}, {
+										"data": "in",
+										render: function (data, type, row) {
+											return row.in = row.in != undefined
+												? "<p style='color:green;'>" + row. in + "</p>"
+												: "-";
+										}
+									}, {
+										"data": "out",
+										render: function (data, type, row) {
+											return row.out = row.out != undefined
+												? "<p style='color:red;'>" +row.out + "</p>"
+												: "-";
+										}
+									}, {
+										"data": "afterBalance",
+										render: function (data, type, row) {
+											return row.afterBalance = row.afterBalance
+												? parseFloat(row.afterBalance).toFixed(2)
+												: "-"
+										}
+									}, {
+										"data": "type",render: function (data, type, row) {
+											return row
+												.type
+												.charAt(0)
+												.toUpperCase() + row
+												.type
+												.slice(1);
+										}
+									}, {
+										"data": "remark"
+									}
+								]
+							});
+
+						});
+					});
+				</script>
+			{% endblock %}
