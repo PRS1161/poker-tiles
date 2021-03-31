@@ -204,7 +204,8 @@ class Player {
                 "playerAction": Sys.Config.Texas.Check,
                 "totalPot":Sys.Rooms[roomId].game.pot,
                 "hasRaised":   hasRaised ,
-                "remaining": parseFloat( parseFloat( this.chips ).toFixed(4) )
+                "remaining": parseFloat( parseFloat( this.chips ).toFixed(4) ),
+                "boardCard": Sys.Rooms[roomId].game.board
             })
             Sys.Game.CashGame.Texas.newControllers.PlayerProcess.progress(Sys.Rooms[roomId]);
 
@@ -239,6 +240,7 @@ class Player {
             "totalPot":Sys.Rooms[roomId].game.pot,
             "hasRaised": hasRaised ,
             "remaining": parseFloat( parseFloat( this.chips ).toFixed(4) ),
+            "boardCard": Sys.Rooms[roomId].game.board
         })
 
         /*var tabelId = Sys.Rooms[roomId].id;
@@ -388,7 +390,8 @@ class Player {
                     "playerAction": Sys.Config.Texas.Bet,
                     "totalPot": Sys.Rooms[roomId].game.pot,
                     "hasRaised":  hasRaised ,
-                    "remaining": parseFloat( parseFloat( this.chips ).toFixed(4) )
+                    "remaining": parseFloat( parseFloat( this.chips ).toFixed(4) ),
+                    "boardCard": Sys.Rooms[roomId].game.board
                 })
                 
                 /*var tabelId = Sys.Rooms[roomId].id;
@@ -494,7 +497,8 @@ class Player {
                 "playerAction": Sys.Config.Texas.Call,
                 "totalPot":Sys.Rooms[roomId].game.pot,
                 "hasRaised":  hasRaised,
-                "remaining": parseFloat( parseFloat(this.chips).toFixed(4) )
+                "remaining": parseFloat( parseFloat(this.chips).toFixed(4) ),
+                "boardCard": Sys.Rooms[roomId].game.board
             })
             // added by K@Y
             
@@ -631,7 +635,8 @@ class Player {
             "playerAction": Sys.Config.Texas.AllIn,
             "totalPot":Sys.Rooms[roomId].game.pot,
             "hasRaised":hasRaised ,
-            "remaining": parseFloat( parseFloat(this.chips).toFixed(4) )
+            "remaining": parseFloat( parseFloat(this.chips).toFixed(4) ),
+            "boardCard": Sys.Rooms[roomId].game.board
         })
         // added by K@Y// added by K@Y
 		/*let transactionData = {

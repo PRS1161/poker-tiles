@@ -1,7 +1,7 @@
 var Sys = require('../../../../Boot/Sys');
 
 class Game {
-  constructor(id, roomId, smallBlind, bigBlind, status, pot, betName, bets, roundBets, deck, players, winners, history, gameNumber, sidePotAmount, playerSidePot, gamePot, gameMainPot, gameRevertPoint,  otherData, maxBetOnRaise, stopReraise, aggressorIdArray, isUnqualifiedRaise, tempSidepot, rakePercenage, rakeDistribution,winnerDetails,rakeCap,gameTotalChips,adminExtraRakePercentage) {
+  constructor(id, roomId, smallBlind, bigBlind, status, pot, betName, bets, roundBets, deck, board, players, winners, history, gameNumber, sidePotAmount, playerSidePot, gamePot, gameMainPot, gameRevertPoint,  otherData, maxBetOnRaise, stopReraise, aggressorIdArray, isUnqualifiedRaise, tempSidepot, rakePercenage, rakeDistribution,winnerDetails,rakeCap,gameTotalChips,adminExtraRakePercentage) {
 
     this.id = id;
     this.roomId = roomId;
@@ -13,6 +13,7 @@ class Game {
     this.bets = (bets) ? bets : [];
     this.roundBets = (roundBets) ? roundBets : [];
     this.deck = (deck) ? deck : [];
+    this.board = (board) ? board : [];
     this.players = (players) ? players : [];
     this.winners = (winners) ? winners : [];
     this.history = (history) ? history : [];
@@ -48,6 +49,7 @@ class Game {
       game.bets,
       game.roundBets,
       game.deck,
+      game.board,
       game.players,
       game.winners,
       game.history,
@@ -84,6 +86,7 @@ class Game {
       bets: this.bets,
       roundBets: this.roundBets,
       deck: this.deck,
+      board: this.board,
       players: this.players,
       winners: this.winners,
       history: this.history,

@@ -42,6 +42,7 @@ module.exports = {
                 }
 				/** End ::: Custom code for Side Pot Two Player (code is Petch) */
 				result.history = room.game.history
+				result.cards = room.game.board
 				result.potAmount = room.game.pot
 				result.PlayerSidePot = {
 					sidePot : sidePot,
@@ -287,6 +288,7 @@ module.exports = {
 				console.log("sidepot and gamepot updates in reconnect", sidePot);
 
 				result.history = room.game.history
+				result.cards = room.game.board
 				result.potAmount = room.game.pot
 				result.PlayerSidePot = {
 					sidePot : sidePot,

@@ -660,6 +660,7 @@ class Room {
             room.game.betName = 'bet'; //bet,raise,re-raise,cap
             room.game.bets.splice(0, room.game.bets.length);
             room.game.deck.splice(0, room.game.deck.length);
+            room.game.board.splice(0, room.game.board.length);
             room.game.history.splice(0, room.game.history.length);
             for (let i = 0; i < room.players.length; i++) {
               room.game.bets[i] = 0;
@@ -721,7 +722,8 @@ class Room {
                   betAmount: parseFloat( parseFloat( room.players[room.smallBlindIndex].chips ).toFixed(4) ),
                   totalBetAmount: parseFloat( parseFloat( room.smallBlind ).toFixed(4) ),
                   playerAction: Sys.Config.Texas.AllIn,
-                  remaining: 0
+                  remaining: 0,
+                  boardCard: room.game.board
                 });
                 room.players[room.smallBlindIndex].chips = 0;
                 room.game.gameTotalChips= parseFloat(parseFloat(room.game.gameTotalChips) + parseFloat(room.players[room.smallBlindIndex].chips));
@@ -739,7 +741,8 @@ class Room {
                   totalBetAmount: parseFloat( parseFloat( room.smallBlind).toFixed(4) ),
                   totalPot:0,
                   playerAction: Sys.Config.Texas.SmallBlind,
-                  remaining: parseFloat( parseFloat(room.players[room.smallBlindIndex].chips).toFixed(4) )
+                  remaining: parseFloat( parseFloat(room.players[room.smallBlindIndex].chips).toFixed(4) ),
+                  boardCard: room.game.board
                 });
               }
               
@@ -800,7 +803,8 @@ class Room {
                   betAmount: parseFloat( parseFloat( room.players[room.bigBlindIndex].chips).toFixed(4) ),
                   totalBetAmount: parseFloat( parseFloat(room.bigBlind).toFixed(4) ),
                   playerAction: Sys.Config.Texas.AllIn,
-                  remaining: 0
+                  remaining: 0,
+                  boardCard: room.game.board
                 });
                 room.game.gameTotalChips= parseFloat(parseFloat(room.game.gameTotalChips) + parseFloat(room.players[room.bigBlindIndex].chips));
                 room.players[room.bigBlindIndex].chips = 0;
@@ -818,7 +822,8 @@ class Room {
                   betAmount: parseFloat( parseFloat( room.bigBlind).toFixed(4) ),
                   totalBetAmount: parseFloat( parseFloat(room.bigBlind).toFixed(4) ),
                   playerAction: Sys.Config.Texas.BigBlind,
-                  remaining: parseFloat( parseFloat( room.players[room.bigBlindIndex].chips ).toFixed(4) )
+                  remaining: parseFloat( parseFloat( room.players[room.bigBlindIndex].chips ).toFixed(4) ),
+                  boardCard: room.game.board
                 });
               }
 

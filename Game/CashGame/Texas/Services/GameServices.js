@@ -27,6 +27,7 @@ module.exports = {
         "bets"          : [],
         "roundBets"     : [],
         "deck"          : [],
+        "board"         : [],
         "history"       : [],
         "gameNumber"    : gameNumber,
         "sidePotAmount" : [],
@@ -43,7 +44,6 @@ module.exports = {
         "rakePercenage": data.rakePercenage,
         "rakeDistribution":data.rakeDistribution,
         "adminExtraRakePercentage":data.adminExtraRakePercentage,
-        "clubId": data.clubId
       }
 
       let gameSave = new gameModel(gameObj);

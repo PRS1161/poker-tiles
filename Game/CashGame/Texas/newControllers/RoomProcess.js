@@ -870,6 +870,7 @@ module.exports = {
 			}
 			Sys.Timers[room.id] = setTimeout(async function (room) {
 				await Sys.Io.of(Sys.Config.Namespace.CashTexas).to(room.id).emit('RoundComplete', {
+					cards: room.game.board,
 					potAmount: room.game.pot,
 					playerSidePot: {
 						sidePot: sidePot,
@@ -1065,11 +1066,13 @@ module.exports = {
 				room = await Sys.Game.CashGame.Texas.Services.RoomServices.update(room);
 				console.log('<=> Game Finished Called ||  Texas GAME-NUMBER [' + room.game.gameNumber + '] ||');
 				let dataObj = {
+					cards: room.game.board,
 					potAmount: room.game.pot
 				};
 				console.log('<=> Game Finished Round Complete Broadcast ||  Texas GAME-NUMBER [' + room.game.gameNumber + '] || RoundComplete : ', dataObj);
 				console.log("gamefinished Roundcomplete broadcast", room.game.pot, room.game.gameMainPot, sidePot, room.game.status, room.status)
 				await Sys.Io.of(Sys.Config.Namespace.CashTexas).to(room.id).emit('RoundComplete', {
+					cards: room.game.board,
 					potAmount: room.game.pot,
 					playerSidePot: {
 						sidePot: sidePot,

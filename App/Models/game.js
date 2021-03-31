@@ -45,6 +45,10 @@ const GameSchema = new Schema({
         type: 'array',
         default: []
     },
+    history: {
+        type: 'array',
+        default: []
+    },
     players: {
         type: 'array',
         default: []
