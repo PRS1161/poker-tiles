@@ -1636,6 +1636,13 @@ module.exports = {
 					}
 				}
 
+				/* FOR TEST PURPOSE GAME LOGIC START */
+					if( maxBet > room.game.bets[room.currentPlayer]) {
+						room.game.bets[room.currentPlayer] = maxBet;
+						console.log("ROOM GAME BETS AFTER UPDATED", room.game.bets)
+					}
+					
+				/* FOR TEST PURPOSE GAME LOGIC END */
 
 				// first check for check action and then for fold or lefting the player
 				if (room.game.bets[room.currentPlayer] == maxBet) {
