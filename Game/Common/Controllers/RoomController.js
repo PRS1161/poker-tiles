@@ -35,7 +35,7 @@ module.exports = {
           bigBlindIndex    : 0,
           minPlayers       : 2,
           maxPlayers       : Sys.Config.App.maxPlayers,
-          otherData        : { gameSpeed :  15 },
+          otherData        : { gameSpeed :  60 },
           minBuyIn         : parseFloat(smallBlind * 80),
           maxBuyIn         : parseFloat(bigBlind * 200),
           rackPercent      : settingsData.rakePercenage,

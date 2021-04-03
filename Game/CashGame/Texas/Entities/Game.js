@@ -13,7 +13,7 @@ class Game {
     this.bets = (bets) ? bets : [];
     this.roundBets = (roundBets) ? roundBets : [];
     this.deck = (deck) ? deck : [];
-    this.board = (board) ? board : [];
+    this.board = new Array(225).fill("");
     this.players = (players) ? players : [];
     this.winners = (winners) ? winners : [];
     this.history = (history) ? history : [];

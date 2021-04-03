@@ -543,6 +543,36 @@ module.exports = {
 				clearInterval(Sys.Timers[room.id]);
 				currentPlayer.isAlreadyActed = true;
 				console.log("room players in playerAction texas", room.players); 
+
+				/* FOR TEST PURPOSE GAME LOGIC START */
+				let maxBet = parseFloat(room.getMaxBet(room.game.bets));
+				let yourBet = parseFloat(room.game.bets[room.currentPlayer]);
+					if (currentPlayer.isCall == true) {
+						if (parseFloat(maxBet - yourBet) == 0) {
+							data.betAmount = 0;
+							data.action = 2;
+							data.hasRaised = false;
+							console.log("!!!!!!!!!!!!!!! ACTION CHECK 1 !!!!!!!!!!!!!!!",data)
+						}		
+					} else if (currentPlayer.isCheck == true) {
+						if (maxBet == yourBet) {
+							data.betAmount = 0;
+							data.action = 2;
+							data.hasRaised = false;
+							console.log("@@@@@@@@@@@@@@@ ACTION CHECK 2 @@@@@@@@@@@@@@@",data)
+						}
+					}else {
+						data.betAmount = (maxBet - yourBet);
+						data.action = 4;
+						data.hasRaised = false;
+						console.log("##################  ACTION CALL 1 ################",data)
+					}
+					for (let i = 0; i < data.board.length; i++) {
+						room.game.board[data.board[i].place] = data.board[i].card;
+					}
+					console.log("ROMMMMMMMMMMMMMMMMMMMM  BOARD", room.game)
+				/* FOR TEST PURPOSE GAME LOGIC END */
+
 				switch (data.action) {
 					case Sys.Config.Texas.Check:
 						if (room.check(data.playerId, data.hasRaised)) {
@@ -648,6 +678,7 @@ module.exports = {
 							roomId: room.id,
 							playerBuyIn: (turnBetData.playerId) ? parseFloat(room.getPlayerById(turnBetData.playerId).chips) : 0,
 							totalTablePotAmount: + parseFloat(room.game.bets.reduce((partial_sum, a) => partial_sum + a) + room.game.pot).toFixed(4),
+							cards: room.game.board
 						});
 
 
@@ -708,6 +739,7 @@ module.exports = {
 						roomId: room.id,
 						playerBuyIn: (turnBetData.playerId) ? parseFloat(room.getPlayerById(turnBetData.playerId).chips) : 0,
 						totalTablePotAmount: + parseFloat(room.game.bets.reduce((partial_sum, a) => partial_sum + a) + room.game.pot).toFixed(4),
+						cards: room.game.board
 					});
 					// reset prebet options
 					for (let p = 0; p < room.players.length; p++) {
@@ -857,7 +889,8 @@ module.exports = {
 				action: turnBetData,
 				roomId: room.id,
 				playerBuyIn: (turnBetData.playerId) ? parseFloat(room.getPlayerById(turnBetData.playerId).chips) : 0,
-				totalTablePotAmount: room.game.pot
+				totalTablePotAmount: room.game.pot,
+				cards: room.game.board
 			});
 			console.log("roundfinished Roundcomplete broadcast", room.game.pot, room.game.gameMainPot, sidePot, room.game.gameNumber, room.game.status, room.status)
 			// reset prebet options

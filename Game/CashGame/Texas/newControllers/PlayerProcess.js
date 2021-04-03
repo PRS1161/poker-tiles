@@ -34,6 +34,7 @@ module.exports = {
                             playerBuyIn: (turnBetData.playerId) ? parseFloat(room.getPlayerById(turnBetData.playerId).chips) : 0,
                             roomId: room.id,
                             totalTablePotAmount: room.game.pot,
+                            cards: room.game.board
                         });
             
                         Sys.Timers[room.id] = setTimeout(async function(room){
@@ -92,7 +93,7 @@ module.exports = {
                             playerBuyIn: (turnBetData.playerId) ? parseFloat(room.getPlayerById(turnBetData.playerId).chips) : 0,
                             roomId: room.id,
                             totalTablePotAmount: room.game.pot,
-                        
+                            cards: room.game.board
                         });
             
                 
@@ -131,24 +132,24 @@ module.exports = {
 
                         /* COMMENT FOR ONLY TEST PURPOSE START */
 
-                        // room.currentPlayer = undefined;
-                        // await Sys.Game.CashGame.Texas.newControllers.RoomProcess.gameFinished(room, sidePot);
+                        room.currentPlayer = undefined;
+                        await Sys.Game.CashGame.Texas.newControllers.RoomProcess.gameFinished(room, sidePot);
 
                         /* COMMENT FOR ONLY TEST PURPOSE END */
 
                         /* FOR TEST PURPOSE GAME LOGIC START  */
-                        for (i = 0; i < room.game.bets.length; i += 1) {
-                            room.game.bets[i] = 0;
-                        }
-                        for (i = 0; i < room.players.length; i += 1) {
-                            room.players[i].talked = false;
-                            room.players[i].isSidepot = false;
-                            room.players[i].roundRaisedAmount = 0;
-                        }
-                        room.game.maxBetOnRaise = 0;
-                        room.game.stopReraise = false;
-                        room.game.isUnqualifiedRaise = false;
-                        await Sys.Game.CashGame.Texas.newControllers.RoomProcess.roundFinished(room, sidePot)
+                        // for (i = 0; i < room.game.bets.length; i += 1) {
+                        //     room.game.bets[i] = 0;
+                        // }
+                        // for (i = 0; i < room.players.length; i += 1) {
+                        //     room.players[i].talked = false;
+                        //     room.players[i].isSidepot = false;
+                        //     room.players[i].roundRaisedAmount = 0;
+                        // }
+                        // room.game.maxBetOnRaise = 0;
+                        // room.game.stopReraise = false;
+                        // room.game.isUnqualifiedRaise = false;
+                        // await Sys.Game.CashGame.Texas.newControllers.RoomProcess.roundFinished(room, sidePot)
                         /* FOR TEST PURPOSE GAME LOGIC END  */
                     }
                 }
