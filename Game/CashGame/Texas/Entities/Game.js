@@ -2,7 +2,6 @@ var Sys = require('../../../../Boot/Sys');
 
 class Game {
   constructor(id, roomId, smallBlind, bigBlind, status, pot, betName, bets, roundBets, deck, board, players, winners, history, gameNumber, sidePotAmount, playerSidePot, gamePot, gameMainPot, gameRevertPoint,  otherData, maxBetOnRaise, stopReraise, aggressorIdArray, isUnqualifiedRaise, tempSidepot, rakePercenage, rakeDistribution,winnerDetails,rakeCap,gameTotalChips,adminExtraRakePercentage) {
-
     this.id = id;
     this.roomId = roomId;
     this.smallBlind = smallBlind;
@@ -13,7 +12,7 @@ class Game {
     this.bets = (bets) ? bets : [];
     this.roundBets = (roundBets) ? roundBets : [];
     this.deck = (deck) ? deck : [];
-    this.board = new Array(225).fill("");
+    this.board = board;
     this.players = (players) ? players : [];
     this.winners = (winners) ? winners : [];
     this.history = (history) ? history : [];

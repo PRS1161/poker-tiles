@@ -27,7 +27,7 @@ module.exports = {
         "bets"          : [],
         "roundBets"     : [],
         "deck"          : [],
-        "board"         : [],
+        "board"         : new Array(225).fill("BC"),
         "history"       : [],
         "gameNumber"    : gameNumber,
         "sidePotAmount" : [],

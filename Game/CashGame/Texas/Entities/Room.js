@@ -660,7 +660,6 @@ class Room {
             room.game.betName = 'bet'; //bet,raise,re-raise,cap
             room.game.bets.splice(0, room.game.bets.length);
             room.game.deck.splice(0, room.game.deck.length);
-            room.game.board.splice(0, room.game.board.length);
             room.game.history.splice(0, room.game.history.length);
             for (let i = 0; i < room.players.length; i++) {
               room.game.bets[i] = 0;
