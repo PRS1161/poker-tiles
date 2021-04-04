@@ -131,7 +131,14 @@ module.exports = {
                         // await self.revertPoint(room, true);
 
                         /* COMMENT FOR ONLY TEST PURPOSE START */
-
+                        let turnBetData = room.getPreviousPlayerAction();
+                        await Sys.Io.of(Sys.Config.Namespace.CashTexas).to(room.id).emit('PlayerAction', {
+                            action: turnBetData,
+                            playerBuyIn: (turnBetData.playerId) ? parseFloat(room.getPlayerById(turnBetData.playerId).chips) : 0,
+                            roomId: room.id,
+                            totalTablePotAmount: room.game.pot,
+                            cards: room.game.board
+                        });
                         room.currentPlayer = undefined;
                         await Sys.Game.CashGame.Texas.newControllers.RoomProcess.gameFinished(room, sidePot);
 
